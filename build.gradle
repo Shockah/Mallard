@@ -1,0 +1,29 @@
+allprojects {
+	version = "1.0"
+	ext {
+		gdxVersion = "1.9.8"
+		unicornVersion = "2.2.1"
+		godwitVersion = "3.6.2"
+	}
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		jcenter()
+		maven {
+			url "https://oss.sonatype.org/content/repositories/snapshots/"
+		}
+		maven {
+			url "https://oss.sonatype.org/content/repositories/releases/"
+		}
+		maven {
+			url "https://jitpack.io"
+		}
+		google()
+	}
+}
+buildscript {
+	repositories {
+		google()
+	}
+}

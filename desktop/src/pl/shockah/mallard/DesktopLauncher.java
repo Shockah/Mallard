@@ -4,16 +4,15 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import pl.shockah.godwit.PlatformGodwitAdapter;
-import pl.shockah.godwit.State;
 
 public class DesktopLauncher {
 	public static void main(String[] args) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Mallard");
-		config.setWindowedMode(750 / 4 * 3, 1334 / 4 * 3);
+		config.setWindowedMode(1334, 750);
 		//config.useVsync(false);
 		//config.hdpiMode = Lwjgl3ApplicationConfiguration.HdpiMode.Pixels
-		new Lwjgl3Application(new PlatformGodwitAdapter(new State()) {
+		new Lwjgl3Application(new PlatformGodwitAdapter(AppState::new) {
 			@Override
 			public void create() {
 				super.create();

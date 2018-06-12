@@ -12,7 +12,7 @@ public class DesktopLauncher {
 		config.setWindowedMode(1334, 750);
 		//config.useVsync(false);
 		//config.hdpiMode = Lwjgl3ApplicationConfiguration.HdpiMode.Pixels
-		new Lwjgl3Application(new PlatformGodwitAdapter(AppState::new) {
+		new Lwjgl3Application(new PlatformGodwitAdapter(EditorState::new) {
 			@Override
 			public void create() {
 				super.create();

@@ -2,8 +2,9 @@ apply plugin: "java"
 
 dependencies {
 	compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-	compile "com.github.Shockah.Godwit:core:$godwitVersion"
 	compile "com.google.code.findbugs:jsr305:3.0.2"
+	compile "com.github.Shockah.Godwit:core:$godwitVersion"
+	compile "com.github.Shockah.Unicorn:collection:$unicornVersion"
 }
 
 targetCompatibility = '1.8'

@@ -23,6 +23,12 @@ public final class Assets {
 	public static final class Icon {
 		@Nonnull
 		public static final TextureAsset newIcon = new TextureAsset("icon/new.png");
+
+		@Nonnull
+		public static final TextureAsset save = new TextureAsset("icon/save.png");
+
+		@Nonnull
+		public static final TextureAsset load = new TextureAsset("icon/load.png");
 	}
 
 	@UtilityClass

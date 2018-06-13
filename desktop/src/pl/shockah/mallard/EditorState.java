@@ -17,6 +17,7 @@ import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.MallardButton;
 import pl.shockah.mallard.ui.MallardPanel;
 import pl.shockah.mallard.ui.SpriteDisplayPanel;
+import pl.shockah.mallard.ui.SpriteFramesPanel;
 
 public final class EditorState extends State {
 	@Nullable
@@ -40,7 +41,6 @@ public final class EditorState extends State {
 		});
 
 		ui.addChild(filePanel = createFilePanel());
-		setupSpriteProject();
 	}
 
 	private MallardPanel createFilePanel() {
@@ -51,7 +51,7 @@ public final class EditorState extends State {
 		panel.addConstraint(new BasicConstraint(panel, Constraint.Attribute.Top, ui, new Unit.Pixels(12f)));
 
 		new MallardButton.Icon(this, Assets.Icon.newIcon, button -> {
-			System.out.println("new button pressed");
+			setupSpriteProject();
 		}) {
 			{
 				panel.content.addChild(this);
@@ -99,5 +99,12 @@ public final class EditorState extends State {
 		projectContainer.addConstraint(new BetweenConstraint(projectContainer, filePanel.getAttributes().right, ui.getAttributes().right));
 		projectContainer.addConstraint(new PinConstraint(projectContainer, ui, PinConstraint.Sides.Vertical));
 		ui.addChild(projectContainer);
+
+		MallardPanel framesPanel = new SpriteFramesPanel(this, project);
+		projectContainer.addChild(framesPanel);
+		framesPanel.addConstraint(new BasicConstraint(framesPanel.getAttributes().width, new Unit.Pixels(128f)));
+		framesPanel.addConstraint(BasicConstraint.withParent(framesPanel, Constraint.Attribute.Height, new Unit.Pixels(-24f)));
+		framesPanel.addConstraint(BasicConstraint.withParent(framesPanel, Constraint.Attribute.Left, new Unit.Pixels(12f)));
+		framesPanel.addConstraint(BasicConstraint.withParent(framesPanel, Constraint.Attribute.Top, new Unit.Pixels(12f)));
 	}
 }

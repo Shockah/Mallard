@@ -29,6 +29,9 @@ public final class Assets {
 
 		@Nonnull
 		public static final TextureAsset load = new TextureAsset("icon/load.png");
+
+		@Nonnull
+		public static final TextureAsset plus = new TextureAsset("icon/plus.png");
 	}
 
 	@UtilityClass

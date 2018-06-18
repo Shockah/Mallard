@@ -41,8 +41,6 @@ public final class EditorState extends State {
 		});
 
 		ui.addChild(filePanel = createFilePanel());
-
-		setupSpriteProject();
 	}
 
 	private MallardPanel createFilePanel() {

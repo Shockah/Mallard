@@ -1,20 +1,20 @@
 package pl.shockah.mallard;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import pl.shockah.godwit.PlatformGodwitAdapter;
 
 public class DesktopLauncher {
 	public static void main(String[] args) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "Mallard";
-		config.fullscreen = false;
-		config.width = 1334;
-		config.height = 750;
+		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setTitle("Mallard");
+		//config.title = "Mallard";
+		//config.fullscreen = false;
+		config.setWindowedMode(1334, 750);
 		//config.useVsync(false);
 		//config.hdpiMode = Lwjgl3ApplicationConfiguration.HdpiMode.Pixels
-		new LwjglApplication(new PlatformGodwitAdapter(EditorState::new) {
+		new Lwjgl3Application(new PlatformGodwitAdapter(EditorState::new) {
 			@Override
 			public void create() {
 				super.create();

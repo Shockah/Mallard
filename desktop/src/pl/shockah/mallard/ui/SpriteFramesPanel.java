@@ -1,5 +1,7 @@
 package pl.shockah.mallard.ui;
 
+import com.badlogic.gdx.graphics.Color;
+
 import javax.annotation.Nonnull;
 
 import pl.shockah.godwit.State;
@@ -14,7 +16,7 @@ import pl.shockah.godwit.ui.Unit;
 import pl.shockah.mallard.Assets;
 import pl.shockah.mallard.project.SpriteProject;
 
-public class SpriteFramesPanel extends MallardPanel {
+public class SpriteFramesPanel extends MallardGroupPanel {
 	@Nonnull
 	public final SpriteProject project;
 
@@ -22,10 +24,10 @@ public class SpriteFramesPanel extends MallardPanel {
 	public final UiScroll scroll = new UiScroll(UiScroll.Direction.Vertical);
 
 	public SpriteFramesPanel(@Nonnull State state, @Nonnull SpriteProject project) {
-		super(state);
+		super(state, "Frames", Color.WHITE, Color.BLACK);
 		this.project = project;
 
-		content.addChild(scroll);
+		contentPanel.content.addChild(scroll);
 		scroll.addConstraint(PinConstraint.create(scroll));
 
 		UiButton addButton = new MallardButton.Icon(state, Assets.Icon.plus, button -> {});

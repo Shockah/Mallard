@@ -1,8 +1,12 @@
 package pl.shockah.mallard;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import javax.annotation.Nonnull;
 
 import lombok.experimental.UtilityClass;
+import pl.shockah.godwit.asset.FreeTypeFontAsset;
+import pl.shockah.godwit.asset.FreeTypeFontLoader;
 import pl.shockah.godwit.asset.TextureAsset;
 
 @UtilityClass
@@ -39,4 +43,10 @@ public final class Assets {
 		@Nonnull
 		public static final TextureAsset transparencyGrid = new TextureAsset("transparency-grid.png");
 	}
+
+	@Nonnull
+	public static final FreeTypeFontAsset font12 = new FreeTypeFontAsset("kenvector_future.ttf", new FreeTypeFontLoader.FreeTypeFontParameter() {{
+		size = 12;
+		minFilter = magFilter = Texture.TextureFilter.Linear;
+	}});
 }

@@ -15,6 +15,7 @@ import pl.shockah.godwit.ui.Unit;
 import pl.shockah.mallard.project.Project;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.MallardButton;
+import pl.shockah.mallard.ui.MallardGroupPanel;
 import pl.shockah.mallard.ui.MallardPanel;
 import pl.shockah.mallard.ui.SpriteDisplayPanel;
 import pl.shockah.mallard.ui.SpriteFramesPanel;
@@ -100,7 +101,7 @@ public final class EditorState extends State {
 		projectContainer.addConstraint(new PinConstraint(projectContainer, ui, PinConstraint.Sides.Vertical));
 		ui.addChild(projectContainer);
 
-		MallardPanel framesPanel = new SpriteFramesPanel(this, project);
+		MallardGroupPanel framesPanel = new SpriteFramesPanel(this, project);
 		projectContainer.addChild(framesPanel);
 		framesPanel.addConstraint(new BasicConstraint(framesPanel.getAttributes().width, new Unit.Pixels(128f)));
 		framesPanel.addConstraint(BasicConstraint.withParent(framesPanel, Constraint.Attribute.Height, new Unit.Pixels(-24f)));

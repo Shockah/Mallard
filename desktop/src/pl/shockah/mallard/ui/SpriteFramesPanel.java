@@ -24,7 +24,7 @@ public class SpriteFramesPanel extends MallardGroupPanel {
 	public final UiScroll scroll = new UiScroll(UiScroll.Direction.Vertical);
 
 	public SpriteFramesPanel(@Nonnull State state, @Nonnull SpriteProject project) {
-		super(state, "Frames", Color.WHITE, Color.BLACK);
+		super(state, "Frames", new Color(0.5f, 0.75f, 1f, 1f), new Color(0.8f, 1f, 1f, 1f));
 		this.project = project;
 
 		contentPanel.content.addChild(scroll);

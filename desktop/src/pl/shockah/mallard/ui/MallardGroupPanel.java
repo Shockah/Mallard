@@ -28,6 +28,7 @@ public class MallardGroupPanel extends UiPanel {
 		MallardPanel titlePanel = new MallardPanel(state);
 		addChild(titlePanel);
 		titlePanel.addConstraint(new PinConstraint(titlePanel, this));
+		titlePanel.ninePatch.setColor(labelBackgroundColor);
 
 		contentPanel = new MallardPanel(state);
 		addChild(contentPanel);

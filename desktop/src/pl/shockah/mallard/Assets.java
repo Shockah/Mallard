@@ -21,6 +21,9 @@ public final class Assets {
 
 		@Nonnull
 		public static final TextureAsset buttonPressed = new TextureAsset("ui/button-pressed.png");
+
+		@Nonnull
+		public static final TextureAsset textbox = new TextureAsset("ui/textbox.png");
 	}
 
 	@UtilityClass
@@ -45,8 +48,14 @@ public final class Assets {
 	}
 
 	@Nonnull
-	public static final FreeTypeFontAsset font12 = new FreeTypeFontAsset("kenvector_future.ttf", new FreeTypeFontLoader.FreeTypeFontParameter() {{
+	public static final FreeTypeFontAsset font12 = new FreeTypeFontAsset("CooperHewitt-Medium.ttf", new FreeTypeFontLoader.FreeTypeFontParameter() {{
 		size = 12;
+		minFilter = magFilter = Texture.TextureFilter.Linear;
+	}});
+
+	@Nonnull
+	public static final FreeTypeFontAsset font10 = new FreeTypeFontAsset("CooperHewitt-Medium-2.ttf", new FreeTypeFontLoader.FreeTypeFontParameter() {{
+		size = 10;
 		minFilter = magFilter = Texture.TextureFilter.Linear;
 	}});
 }

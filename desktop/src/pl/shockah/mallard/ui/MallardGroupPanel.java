@@ -10,12 +10,17 @@ import pl.shockah.godwit.constraint.BasicConstraint;
 import pl.shockah.godwit.constraint.CenterConstraint;
 import pl.shockah.godwit.constraint.Constraint;
 import pl.shockah.godwit.constraint.PinConstraint;
+import pl.shockah.godwit.gl.ColorUtil;
 import pl.shockah.godwit.gl.GfxFont;
 import pl.shockah.godwit.ui.Alignment;
 import pl.shockah.godwit.ui.UiLabel;
 import pl.shockah.godwit.ui.UiPanel;
 import pl.shockah.godwit.ui.Unit;
 import pl.shockah.mallard.Assets;
+import pl.shockah.unicorn.Math2;
+import pl.shockah.unicorn.color.HSLuvColorSpace;
+import pl.shockah.unicorn.color.LCHColorSpace;
+import pl.shockah.unicorn.color.LabColorSpace;
 
 public class MallardGroupPanel extends UiPanel {
 	@Nonnull
@@ -24,11 +29,19 @@ public class MallardGroupPanel extends UiPanel {
 	@Nonnull
 	public final MallardPanel contentPanel;
 
-	public MallardGroupPanel(@Nonnull State state, @Nonnull String text, @Nonnull Color labelBackgroundColor, @Nonnull Color labelColor) {
+	public MallardGroupPanel(@Nonnull State state, @Nonnull String text, @Nonnull Color color) {
+		HSLuvColorSpace hsl = HSLuvColorSpace.from(LCHColorSpace.from(LabColorSpace.from(ColorUtil.toXYZ(color))));
+		if (hsl.l > 0.5f)
+			hsl.l = Math2.clamp(hsl.l - 0.5f, 0f, 1f);
+		else
+			hsl.l = Math2.clamp(hsl.l + 0.5f, 0f, 1f);
+		hsl.s *= 0.8f;
+		Color labelColor = ColorUtil.toGdx(hsl);
+
 		MallardPanel titlePanel = new MallardPanel(state);
 		addChild(titlePanel);
 		titlePanel.addConstraint(new PinConstraint(titlePanel, this));
-		titlePanel.ninePatch.setColor(labelBackgroundColor);
+		titlePanel.ninePatch.setColor(color);
 
 		contentPanel = new MallardPanel(state);
 		addChild(contentPanel);

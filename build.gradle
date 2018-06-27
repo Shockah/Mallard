@@ -3,7 +3,7 @@ allprojects {
 	ext {
 		gdxVersion = "1.9.8"
 		unicornVersion = "2.3"
-		godwitVersion = "2301fac984fb2d723666b20ae715bc69d492faba"
+		godwitVersion = "022805c7bc723c9d70ad941b8f5fb56fd44a028e"
 	}
 
 	repositories {

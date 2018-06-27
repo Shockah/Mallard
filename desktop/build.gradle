@@ -2,10 +2,6 @@ apply plugin: "java"
 
 dependencies {
 	compile project(":core")
-	compile "com.github.Shockah.Godwit:desktop:$godwitVersion"
-	compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-	compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-	compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 }
 
 targetCompatibility = '1.8'
@@ -18,7 +14,7 @@ sourceSets.main {
 project.ext.mainClassName = "pl.shockah.mallard.DesktopLauncher"
 project.ext.assetsDir = new File("assets")
 
-import org.apache.tools.ant.taskdefs.condition.Os
+//import org.apache.tools.ant.taskdefs.condition.Os
 
 task run(dependsOn: project.tasks.classes, type: JavaExec) {
 	main = project.mainClassName
@@ -26,9 +22,9 @@ task run(dependsOn: project.tasks.classes, type: JavaExec) {
 	standardInput = System.in
 	workingDir = project.assetsDir
 	ignoreExitValue = true
-	if (Os.isFamily(Os.FAMILY_MAC))
-		jvmArgs "-XstartOnFirstThread"
-	jvmArgs "-Dorg.lwjgl.system.allocator=system"
+//	if (Os.isFamily(Os.FAMILY_MAC))
+//		jvmArgs "-XstartOnFirstThread"
+//	jvmArgs "-Dorg.lwjgl.system.allocator=system"
 
 	if (System.getProperty('DEBUG', 'false') == 'true') {
 		jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'

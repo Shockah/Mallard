@@ -1,7 +1,5 @@
 package pl.shockah.mallard.project;
 
-import com.badlogic.gdx.graphics.Pixmap;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,19 +7,22 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.image.Image;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 
 public class SpriteProject extends Project {
 	@Nonnull
-	public final List<Subsprite> subsprites = new ArrayList<>();
+	public final ObservableList<Subsprite> subsprites = FXCollections.observableArrayList();
 
 	@Nonnull
 	public final Map<String, Animation> animations = new LinkedHashMap<>();
 
 	public static class Subsprite {
 		@Nonnull
-		public Pixmap pixmap;
+		public Image image;
 
 		@Nonnull
 		public Vec2 origin = Vec2.zero;
@@ -29,8 +30,8 @@ public class SpriteProject extends Project {
 		@Nonnull
 		public final Map<String, Shape.Filled> shapes = new LinkedHashMap<>();
 
-		public Subsprite(@Nonnull Pixmap pixmap) {
-			this.pixmap = pixmap;
+		public Subsprite(@Nonnull Image image) {
+			this.image = image;
 		}
 	}
 
@@ -48,6 +49,19 @@ public class SpriteProject extends Project {
 
 			public Frame(@Nonnull Subsprite subsprite) {
 				this.subsprite = subsprite;
+			}
+		}
+
+		public static final class AddedEvent {
+			@Nonnull
+			public final String name;
+
+			@Nonnull
+			public final Animation animation;
+
+			public AddedEvent(@Nonnull String name, @Nonnull Animation animation) {
+				this.name = name;
+				this.animation = animation;
 			}
 		}
 	}

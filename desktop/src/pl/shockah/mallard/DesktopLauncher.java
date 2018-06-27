@@ -1,25 +1,32 @@
 package pl.shockah.mallard;
 
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.SpriteController;
 
-import pl.shockah.godwit.PlatformGodwitAdapter;
-
-public class DesktopLauncher {
+public class DesktopLauncher extends Application {
 	public static void main(String[] args) {
-		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setTitle("Mallard");
-		//config.title = "Mallard";
-		//config.fullscreen = false;
-		config.setWindowedMode(1334, 750);
-		//config.useVsync(false);
-		//config.hdpiMode = Lwjgl3ApplicationConfiguration.HdpiMode.Pixels
-		new Lwjgl3Application(new PlatformGodwitAdapter(EditorState::new) {
-			@Override
-			public void create() {
-				super.create();
-				//PixelMaker.setup();
-			}
-		}, config);
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage stage) {
+		stage.setTitle("Mallard");
+
+		BorderPane root = new BorderPane();
+		root.setTop(new ToolBar(
+				new Button("New"),
+				new Button("Load"),
+				new Button("Save")
+		));
+		root.setCenter(new SpriteController(new SpriteProject()).view);
+
+		stage.setScene(new Scene(root, 1334, 750));
+		stage.show();
 	}
 }

@@ -11,7 +11,7 @@ sourceSets.main {
 	java.srcDirs = ["src"]
 }
 
-project.ext.mainClassName = "pl.shockah.mallard.DesktopLauncher"
+project.ext.mainClassName = "pl.shockah.mallard.Mallard"
 project.ext.assetsDir = new File("assets")
 
 //import org.apache.tools.ant.taskdefs.condition.Os

@@ -18,7 +18,7 @@ public class SpriteProject extends Project {
 	public final ObservableList<Subsprite> subsprites = FXCollections.observableArrayList();
 
 	@Nonnull
-	public final Map<String, Animation> animations = new LinkedHashMap<>();
+	public final ObservableList<Animation.Entry> animations = FXCollections.observableArrayList();
 
 	public static class Subsprite {
 		@Nonnull
@@ -52,14 +52,14 @@ public class SpriteProject extends Project {
 			}
 		}
 
-		public static final class AddedEvent {
+		public static class Entry {
 			@Nonnull
 			public final String name;
 
 			@Nonnull
 			public final Animation animation;
 
-			public AddedEvent(@Nonnull String name, @Nonnull Animation animation) {
+			public Entry(@Nonnull String name, @Nonnull Animation animation) {
 				this.name = name;
 				this.animation = animation;
 			}

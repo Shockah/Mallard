@@ -61,9 +61,9 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 			if (!project.animations.isEmpty()) {
 				JSONObject jAnimations = json.putNewObject("animations");
-				for (Map.Entry<String, SpriteProject.Animation> animationEntry : project.animations.entrySet()) {
-					SpriteProject.Animation animation = animationEntry.getValue();
-					JSONObject jAnimation = jAnimations.putNewObject(animationEntry.getKey());
+				for (SpriteProject.Animation.Entry animationEntry : project.animations) {
+					SpriteProject.Animation animation = animationEntry.animation;
+					JSONObject jAnimation = jAnimations.putNewObject(animationEntry.name);
 
 					JSONList<JSONObject> jAnimationFrames = (JSONList<JSONObject>) jAnimation.putNewList("frames");
 					for (SpriteProject.Animation.Frame frame : animation.frames) {
@@ -133,7 +133,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 					animation.duration = jAnimation.getFloat("duration");
 
-					project.animations.put(jAnimationEntry.getKey(), animation);
+					project.animations.add(new SpriteProject.Animation.Entry(jAnimationEntry.getKey(), animation));
 				}
 			}
 

@@ -7,25 +7,23 @@ import javax.annotation.Nonnull;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.unicorn.collection.Box;
 
-public class SpriteFramesController extends Controller {
+public class SpriteAnimationsController extends Controller {
 	@Nonnull
 	public final SpriteProject project;
 
-	public SpriteFramesController(@Nonnull SpriteProject project) {
+	public SpriteAnimationsController(@Nonnull SpriteProject project) {
 		this.project = project;
 
-		Box<ListView<SpriteProject.Subsprite>> listView = new Box<>();
+		Box<ListView<SpriteProject.Animation.Entry>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
 		setView(new VBox(4) {{
@@ -34,13 +32,13 @@ public class SpriteFramesController extends Controller {
 					setMaxWidth(Double.MAX_VALUE);
 					HBox.setHgrow(this, Priority.ALWAYS);
 					setOnAction(event -> {
-						FileChooser chooser = new FileChooser();
-						chooser.setTitle("Add frame");
-						chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Loss-less images", "png", "bmp", "gif"));
-						for (File file : chooser.showOpenMultipleDialog(Mallard.getStage())) {
-							Image image = new Image(file.toURI().toString());
-							project.subsprites.add(new SpriteProject.Subsprite(image));
-						}
+						new TextInputDialog() {{
+							setTitle("Add animation");
+							setHeaderText("Add animation");
+							setContentText("Name:");
+						}}.showAndWait().ifPresent(result -> {
+							project.animations.add(new SpriteProject.Animation.Entry(result, new SpriteProject.Animation()));
+						});
 					});
 				}});
 				getChildren().add(new Button("Remove") {{
@@ -49,15 +47,15 @@ public class SpriteFramesController extends Controller {
 					HBox.setHgrow(this, Priority.ALWAYS);
 					setDisable(true);
 					setOnAction(event -> {
-						project.subsprites.remove(listView.value.getSelectionModel().selectedItemProperty().get());
+						project.animations.remove(listView.value.getSelectionModel().selectedItemProperty().get());
 					});
 				}});
 			}});
-			getChildren().add(new ListView<SpriteProject.Subsprite>() {{
-				ListView<SpriteProject.Subsprite> self = this;
+			getChildren().add(new ListView<SpriteProject.Animation.Entry>() {{
+				ListView<SpriteProject.Animation.Entry> self = this;
 				listView.value = this;
 				setCellFactory(self2 -> new Cell());
-				setItems(project.subsprites);
+				setItems(project.animations);
 				setOnDragOver(event -> {
 					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles()))
 						event.acceptTransferModes(TransferMode.ANY);
@@ -86,25 +84,19 @@ public class SpriteFramesController extends Controller {
 		}});
 	}
 
-	public static final class Cell extends ListCell<SpriteProject.Subsprite> {
-		@Nonnull
-		public final ImageView imageView;
-
+	public static final class Cell extends ListCell<SpriteProject.Animation.Entry> {
 		public Cell() {
 			super();
-
-			imageView = new ImageView();
-			setGraphic(imageView);
 		}
 
 		@Override
-		protected void updateItem(SpriteProject.Subsprite item, boolean empty) {
+		protected void updateItem(SpriteProject.Animation.Entry item, boolean empty) {
 			super.updateItem(item, empty);
 
 			if (empty || item == null) {
-				imageView.setImage(null);
+				setText("");
 			} else {
-				imageView.setImage(item.image);
+				setText(item.name);
 			}
 		}
 	}

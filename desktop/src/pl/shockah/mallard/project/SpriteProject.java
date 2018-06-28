@@ -15,12 +15,12 @@ import pl.shockah.godwit.geom.Vec2;
 
 public class SpriteProject extends Project {
 	@Nonnull
-	public final ObservableList<Subsprite> subsprites = FXCollections.observableArrayList();
+	public final ObservableList<Frame> frames = FXCollections.observableArrayList();
 
 	@Nonnull
 	public final ObservableList<Animation.Entry> animations = FXCollections.observableArrayList();
 
-	public static class Subsprite {
+	public static class Frame {
 		@Nonnull
 		public Image image;
 
@@ -30,7 +30,7 @@ public class SpriteProject extends Project {
 		@Nonnull
 		public final Map<String, Shape.Filled> shapes = new LinkedHashMap<>();
 
-		public Subsprite(@Nonnull Image image) {
+		public Frame(@Nonnull Image image) {
 			this.image = image;
 		}
 	}
@@ -43,12 +43,12 @@ public class SpriteProject extends Project {
 
 		public static class Frame {
 			@Nonnull
-			public final Subsprite subsprite;
+			public final SpriteProject.Frame frame;
 
 			public float relativeDuration = 1f;
 
-			public Frame(@Nonnull Subsprite subsprite) {
-				this.subsprite = subsprite;
+			public Frame(@Nonnull SpriteProject.Frame frame) {
+				this.frame = frame;
 			}
 		}
 

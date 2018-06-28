@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
 import pl.shockah.mallard.project.SpriteProject;
@@ -23,13 +23,14 @@ public class Mallard extends Application {
 		Mallard.stage = stage;
 		stage.setTitle("Mallard");
 
-		BorderPane root = new BorderPane();
-		root.setTop(new ToolBar(
+		VBox root = new VBox();
+		root.setMaxHeight(Double.MAX_VALUE);
+		root.getChildren().add(new ToolBar(
 				new Button("New"),
 				new Button("Load"),
 				new Button("Save")
 		));
-		root.setCenter(new SpriteController(new SpriteProject()).getView());
+		root.getChildren().add(new SpriteController(new SpriteProject()).getView());
 
 		stage.setScene(new Scene(root, 1334, 750));
 		stage.show();

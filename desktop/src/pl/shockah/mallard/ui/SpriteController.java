@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import pl.shockah.mallard.project.SpriteProject;
 
@@ -19,13 +20,16 @@ public class SpriteController extends Controller {
 	@Nonnull
 	protected final SpriteAnimationsController animationsController;
 
+	@Nonnull
+	protected final BorderPane borderPane;
+
 	public SpriteController(@Nonnull SpriteProject project) {
 		this.project = project;
 
-		framesController = new SpriteFramesController(project);
-		animationsController = new SpriteAnimationsController(project);
+		framesController = new SpriteFramesController(this, project);
+		animationsController = new SpriteAnimationsController(this, project);
 
-		setView(new BorderPane() {{
+		setView(borderPane = new BorderPane() {{
 			setLeft(new VBox(8) {{
 				setPadding(new Insets(8));
 
@@ -44,5 +48,13 @@ public class SpriteController extends Controller {
 				}});
 			}});
 		}});
+	}
+
+	public void setCenterPanel(Region view) {
+		borderPane.setCenter(view);
+	}
+
+	public void setRightPanel(Region view) {
+		borderPane.setRight(view);
 	}
 }

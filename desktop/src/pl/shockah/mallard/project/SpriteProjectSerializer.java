@@ -36,24 +36,24 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 			JSONObject json = new JSONObject();
 			json.put("version", VERSION);
 
-			JSONList<JSONObject> jSubsprites = (JSONList<JSONObject>) json.putNewList("subsprites");
-			for (SpriteProject.Subsprite subsprite : project.subsprites) {
+			JSONList<JSONObject> jSubsprites = (JSONList<JSONObject>) json.putNewList("frames");
+			for (SpriteProject.Frame frame : project.frames) {
 				JSONObject jSubsprite = jSubsprites.addNewObject();
 
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(SwingFXUtils.fromFXImage(subsprite.image, null), "png", baos);
+				ImageIO.write(SwingFXUtils.fromFXImage(frame.image, null), "png", baos);
 				jSubsprite.put("data", Base64.getEncoder().encodeToString(baos.toByteArray()));
 
-				if (!subsprite.origin.equals(Vec2.zero)) {
+				if (!frame.origin.equals(Vec2.zero)) {
 					jSubsprite.put("origin", JSONObject.of(
-							"x", subsprite.origin.x,
-							"y", subsprite.origin.y
+							"x", frame.origin.x,
+							"y", frame.origin.y
 					));
 				}
 
-				if (!subsprite.shapes.isEmpty()) {
+				if (!frame.shapes.isEmpty()) {
 					JSONObject jSubspriteShapes = jSubsprite.putNewObject("shapes");
-					for (Map.Entry<String, Shape.Filled> shapeEntry : subsprite.shapes.entrySet()) {
+					for (Map.Entry<String, Shape.Filled> shapeEntry : frame.shapes.entrySet()) {
 						jSubspriteShapes.put(shapeEntry.getKey(), shapeSerializationManager.serialize(shapeEntry.getValue()));
 					}
 				}
@@ -68,7 +68,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 					JSONList<JSONObject> jAnimationFrames = (JSONList<JSONObject>) jAnimation.putNewList("frames");
 					for (SpriteProject.Animation.Frame frame : animation.frames) {
 						JSONObject jAnimationFrame = jAnimationFrames.addNewObject();
-						jAnimationFrame.put("index", project.subsprites.indexOf(frame.subsprite));
+						jAnimationFrame.put("index", project.frames.indexOf(frame.frame));
 						if (frame.relativeDuration != 1f)
 							jAnimationFrame.put("relativeDuration", frame.relativeDuration);
 					}
@@ -93,14 +93,14 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 			SpriteProject project = new SpriteProject();
 
-			for (JSONObject jSubsprite : json.getList("subsprites").ofObjects()) {
+			for (JSONObject jSubsprite : json.getList("frames").ofObjects()) {
 				byte[] data = Base64.getDecoder().decode(jSubsprite.getString("data"));
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
-				SpriteProject.Subsprite subsprite = new SpriteProject.Subsprite(SwingFXUtils.toFXImage(ImageIO.read(bais), null));
+				SpriteProject.Frame frame = new SpriteProject.Frame(SwingFXUtils.toFXImage(ImageIO.read(bais), null));
 
 				if (jSubsprite.containsKey("origin")) {
 					JSONObject jSubspriteOrigin = jSubsprite.getObject("origin");
-					subsprite.origin = new Vec2(
+					frame.origin = new Vec2(
 							jSubspriteOrigin.getFloat("x"),
 							jSubspriteOrigin.getFloat("y")
 					);
@@ -109,11 +109,11 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 				if (jSubsprite.containsKey("shapes")) {
 					for (Map.Entry<String, Object> jSubspriteShapeEntry : jSubsprite.getObject("shapes").entrySet()) {
 						JSONObject jSubspriteShape = (JSONObject) jSubspriteShapeEntry.getValue();
-						subsprite.shapes.put(jSubspriteShapeEntry.getKey(), shapeSerializationManager.deserialize(jSubspriteShape));
+						frame.shapes.put(jSubspriteShapeEntry.getKey(), shapeSerializationManager.deserialize(jSubspriteShape));
 					}
 				}
 
-				project.subsprites.add(subsprite);
+				project.frames.add(frame);
 			}
 
 			if (json.containsKey("animations")) {
@@ -122,8 +122,8 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 					SpriteProject.Animation animation = new SpriteProject.Animation();
 
 					for (JSONObject jAnimationFrame : jAnimation.getList("frames").ofObjects()) {
-						SpriteProject.Subsprite subsprite = project.subsprites.get(jAnimationFrame.getInt("index"));
-						SpriteProject.Animation.Frame animationFrame = new SpriteProject.Animation.Frame(subsprite);
+						SpriteProject.Frame frame = project.frames.get(jAnimationFrame.getInt("index"));
+						SpriteProject.Animation.Frame animationFrame = new SpriteProject.Animation.Frame(frame);
 
 						if (jAnimationFrame.containsKey("relativeDuration"))
 							animationFrame.relativeDuration = jAnimationFrame.getFloat("relativeDuration");

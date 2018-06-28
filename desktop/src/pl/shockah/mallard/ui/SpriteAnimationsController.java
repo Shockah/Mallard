@@ -18,15 +18,20 @@ import pl.shockah.unicorn.collection.Box;
 
 public class SpriteAnimationsController extends Controller {
 	@Nonnull
+	public final SpriteController spriteController;
+
+	@Nonnull
 	public final SpriteProject project;
 
-	public SpriteAnimationsController(@Nonnull SpriteProject project) {
+	public SpriteAnimationsController(@Nonnull SpriteController spriteController, @Nonnull SpriteProject project) {
+		this.spriteController = spriteController;
 		this.project = project;
 
 		Box<ListView<SpriteProject.Animation.Entry>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
 		setView(new VBox(4) {{
+			setMaxHeight(Double.MAX_VALUE);
 			getChildren().add(new HBox(4) {{
 				getChildren().add(new Button("Add") {{
 					setMaxWidth(Double.MAX_VALUE);
@@ -54,6 +59,7 @@ public class SpriteAnimationsController extends Controller {
 			getChildren().add(new ListView<SpriteProject.Animation.Entry>() {{
 				ListView<SpriteProject.Animation.Entry> self = this;
 				listView.value = this;
+				setMaxHeight(Double.MAX_VALUE);
 				setCellFactory(self2 -> new Cell());
 				setItems(project.animations);
 				setOnDragOver(event -> {
@@ -63,12 +69,12 @@ public class SpriteAnimationsController extends Controller {
 				});
 				setOnDragDropped(event -> {
 					if (event.getDragboard().hasImage()) {
-						project.subsprites.add(new SpriteProject.Subsprite(event.getDragboard().getImage()));
+						project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
 						event.setDropCompleted(true);
 					} else if (event.getDragboard().hasFiles()) {
 						for (File file : event.getDragboard().getFiles()) {
 							Image image = new Image(file.toURI().toString());
-							project.subsprites.add(new SpriteProject.Subsprite(image));
+							project.frames.add(new SpriteProject.Frame(image));
 						}
 						event.setDropCompleted(true);
 					} else {

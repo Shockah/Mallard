@@ -1,6 +1,7 @@
 package pl.shockah.mallard.ui;
 
 import java.io.File;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -9,6 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -20,15 +22,20 @@ import pl.shockah.unicorn.collection.Box;
 
 public class SpriteFramesController extends Controller {
 	@Nonnull
+	public final SpriteController spriteController;
+
+	@Nonnull
 	public final SpriteProject project;
 
-	public SpriteFramesController(@Nonnull SpriteProject project) {
+	public SpriteFramesController(@Nonnull SpriteController spriteController, @Nonnull SpriteProject project) {
+		this.spriteController = spriteController;
 		this.project = project;
 
-		Box<ListView<SpriteProject.Subsprite>> listView = new Box<>();
+		Box<ListView<SpriteProject.Frame>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
 		setView(new VBox(4) {{
+			setMaxHeight(Double.MAX_VALUE);
 			getChildren().add(new HBox(4) {{
 				getChildren().add(new Button("Add") {{
 					setMaxWidth(Double.MAX_VALUE);
@@ -37,9 +44,13 @@ public class SpriteFramesController extends Controller {
 						FileChooser chooser = new FileChooser();
 						chooser.setTitle("Add frame");
 						chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Loss-less images", "png", "bmp", "gif"));
-						for (File file : chooser.showOpenMultipleDialog(Mallard.getStage())) {
-							Image image = new Image(file.toURI().toString());
-							project.subsprites.add(new SpriteProject.Subsprite(image));
+
+						List<File> files = chooser.showOpenMultipleDialog(Mallard.getStage());
+						if (files != null) {
+							for (File file : files) {
+								Image image = new Image(file.toURI().toString());
+								project.frames.add(new SpriteProject.Frame(image));
+							}
 						}
 					});
 				}});
@@ -49,15 +60,16 @@ public class SpriteFramesController extends Controller {
 					HBox.setHgrow(this, Priority.ALWAYS);
 					setDisable(true);
 					setOnAction(event -> {
-						project.subsprites.remove(listView.value.getSelectionModel().selectedItemProperty().get());
+						project.frames.remove(listView.value.getSelectionModel().selectedItemProperty().get());
 					});
 				}});
 			}});
-			getChildren().add(new ListView<SpriteProject.Subsprite>() {{
-				ListView<SpriteProject.Subsprite> self = this;
+			getChildren().add(new ListView<SpriteProject.Frame>() {{
+				ListView<SpriteProject.Frame> self = this;
 				listView.value = this;
+				setMaxHeight(Double.MAX_VALUE);
 				setCellFactory(self2 -> new Cell());
-				setItems(project.subsprites);
+				setItems(project.frames);
 				setOnDragOver(event -> {
 					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles()))
 						event.acceptTransferModes(TransferMode.ANY);
@@ -65,18 +77,29 @@ public class SpriteFramesController extends Controller {
 				});
 				setOnDragDropped(event -> {
 					if (event.getDragboard().hasImage()) {
-						project.subsprites.add(new SpriteProject.Subsprite(event.getDragboard().getImage()));
+						project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
 						event.setDropCompleted(true);
 					} else if (event.getDragboard().hasFiles()) {
 						for (File file : event.getDragboard().getFiles()) {
 							Image image = new Image(file.toURI().toString());
-							project.subsprites.add(new SpriteProject.Subsprite(image));
+							project.frames.add(new SpriteProject.Frame(image));
 						}
 						event.setDropCompleted(true);
 					} else {
 						event.setDropCompleted(false);
 					}
 					event.consume();
+				});
+				setOnMouseClicked(event -> {
+					if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
+						return;
+
+					SpriteProject.Frame selected = getSelectionModel().getSelectedItem();
+					if (selected == null)
+						return;
+
+					spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, project, selected).getView());
+					spriteController.setCenterPanel(new SpriteFramePreviewController(spriteController, project, selected).getView());
 				});
 
 				getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -86,7 +109,7 @@ public class SpriteFramesController extends Controller {
 		}});
 	}
 
-	public static final class Cell extends ListCell<SpriteProject.Subsprite> {
+	public static final class Cell extends ListCell<SpriteProject.Frame> {
 		@Nonnull
 		public final ImageView imageView;
 
@@ -98,7 +121,7 @@ public class SpriteFramesController extends Controller {
 		}
 
 		@Override
-		protected void updateItem(SpriteProject.Subsprite item, boolean empty) {
+		protected void updateItem(SpriteProject.Frame item, boolean empty) {
 			super.updateItem(item, empty);
 
 			if (empty || item == null) {

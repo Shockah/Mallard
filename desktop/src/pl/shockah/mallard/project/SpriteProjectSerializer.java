@@ -41,13 +41,13 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 				JSONObject jSubsprite = jSubsprites.addNewObject();
 
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(SwingFXUtils.fromFXImage(frame.image, null), "png", baos);
+				ImageIO.write(SwingFXUtils.fromFXImage(frame.image.getValue(), null), "png", baos);
 				jSubsprite.put("data", Base64.getEncoder().encodeToString(baos.toByteArray()));
 
 				if (!frame.origin.equals(Vec2.zero)) {
 					jSubsprite.put("origin", JSONObject.of(
-							"x", frame.origin.x,
-							"y", frame.origin.y
+							"x", frame.origin.getValue().x,
+							"y", frame.origin.getValue().y
 					));
 				}
 
@@ -100,10 +100,10 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 				if (jSubsprite.containsKey("origin")) {
 					JSONObject jSubspriteOrigin = jSubsprite.getObject("origin");
-					frame.origin = new Vec2(
+					frame.origin.setValue(new Vec2(
 							jSubspriteOrigin.getFloat("x"),
 							jSubspriteOrigin.getFloat("y")
-					);
+					));
 				}
 
 				if (jSubsprite.containsKey("shapes")) {

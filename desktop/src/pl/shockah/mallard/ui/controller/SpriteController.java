@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui;
+package pl.shockah.mallard.ui.controller;
 
 import javax.annotation.Nonnull;
 

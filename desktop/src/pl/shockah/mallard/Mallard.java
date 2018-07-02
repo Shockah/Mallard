@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.SpriteController;
+import pl.shockah.mallard.ui.controller.SpriteController;
 
 public class Mallard extends Application {
 	@Getter

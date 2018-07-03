@@ -127,7 +127,7 @@ public class SpriteFramesController extends Controller {
 			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 			setAlignment(Pos.CENTER);
 
-			ListViewUtilities.setupDragAndDropReorder(this);
+			ListViewUtilities.setupDragAndDropReorder(this, ListViewUtilities.ReorderMethod.RemoveAndInsert);
 		}
 
 		@Override
@@ -135,7 +135,9 @@ public class SpriteFramesController extends Controller {
 			super.updateItem(item, empty);
 
 			imageView.imageProperty().unbind();
-			if (!empty && item != null)
+			if (empty || item == null)
+				imageView.setImage(null);
+			else
 				imageView.imageProperty().bind(item.image);
 		}
 	}

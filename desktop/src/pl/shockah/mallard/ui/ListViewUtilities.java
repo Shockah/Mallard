@@ -18,6 +18,10 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public final class ListViewUtilities {
+	public enum ReorderMethod {
+		Swap, RemoveAndInsert
+	}
+
 	@Nonnull
 	private static final Map<ListView<?>, DataFormat> dragAndDropDataFormats = new WeakHashMap<>();
 
@@ -27,7 +31,7 @@ public final class ListViewUtilities {
 		});
 	}
 
-	public static <T> void setupDragAndDropReorder(@Nonnull ListCell<T> cell) {
+	public static <T> void setupDragAndDropReorder(@Nonnull ListCell<T> cell, @Nonnull ReorderMethod reorderMethod) {
 		cell.setOnDragDetected(event -> {
 			if (cell.getItem() == null)
 				return;
@@ -60,16 +64,31 @@ public final class ListViewUtilities {
 			if (cell.getItem() == null)
 				return;
 
-
 			DataFormat dragAndDropDataFormat = getDragAndDropFormat(cell.getListView());
 			Dragboard dragboard = event.getDragboard();
 			if (dragboard.hasContent(dragAndDropDataFormat)) {
 				ObservableList<T> items = cell.getListView().getItems();
 				int draggedIndex = (int)dragboard.getContent(dragAndDropDataFormat);
-
 				T draggedItem = items.get(draggedIndex);
-				items.set(draggedIndex, cell.getItem());
-				items.set(cell.getIndex(), draggedItem);
+
+				switch (reorderMethod) {
+					case Swap:
+						items.set(draggedIndex, cell.getItem());
+						items.set(cell.getIndex(), draggedItem);
+						break;
+					case RemoveAndInsert:
+						int draggedIntoIndex = cell.getIndex();
+
+						items.remove(draggedIndex);
+						if (draggedIndex > cell.getIndex()) {
+							items.add(draggedIntoIndex, draggedItem);
+						} else {
+							if (draggedIntoIndex < items.size() - 1)
+								items.add(draggedIntoIndex, draggedItem);
+							else
+								items.add(draggedItem);
+						}
+				}
 
 				event.setDropCompleted(true);
 			} else {

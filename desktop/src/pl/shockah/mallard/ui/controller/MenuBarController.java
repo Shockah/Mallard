@@ -53,7 +53,8 @@ public class MenuBarController extends Controller {
 	private void openAction() {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Open");
-		chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Mallard Sprite projects", "mlds"));
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Mallard Sprite projects", "*.mlds"));
+		chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
 
 		File file = chooser.showOpenDialog(Mallard.getStage());
 		if (file == null)
@@ -90,7 +91,8 @@ public class MenuBarController extends Controller {
 
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Save As...");
-		chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Mallard Sprite projects", "mlds"));
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Mallard Sprite projects", "*.mlds"));
+		chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
 
 		File file = chooser.showSaveDialog(Mallard.getStage());
 		if (file == null)

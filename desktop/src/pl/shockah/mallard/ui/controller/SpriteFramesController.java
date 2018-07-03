@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -18,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.ListViewUtilities;
 import pl.shockah.unicorn.collection.Box;
 
 public class SpriteFramesController extends Controller {
@@ -43,7 +46,8 @@ public class SpriteFramesController extends Controller {
 					setOnAction(event -> {
 						FileChooser chooser = new FileChooser();
 						chooser.setTitle("Add frame");
-						chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Loss-less images", "png", "bmp", "gif"));
+						chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Loss-less images", "*.png", "*.bmp", "*.gif"));
+						chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
 
 						List<File> files = chooser.showOpenMultipleDialog(Mallard.getStage());
 						if (files != null) {
@@ -119,6 +123,11 @@ public class SpriteFramesController extends Controller {
 
 			imageView = new ImageView();
 			setGraphic(imageView);
+
+			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+			setAlignment(Pos.CENTER);
+
+			ListViewUtilities.setupDragAndDropReorder(this);
 		}
 
 		@Override

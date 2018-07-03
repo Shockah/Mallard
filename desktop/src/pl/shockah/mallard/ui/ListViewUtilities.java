@@ -45,9 +45,10 @@ public final class ListViewUtilities {
 		});
 
 		cell.setOnDragOver(event -> {
-			if (event.getGestureSource() != cell && event.getDragboard().hasContent(getDragAndDropFormat(cell.getListView())))
+			if (event.getGestureSource() != cell && event.getDragboard().hasContent(getDragAndDropFormat(cell.getListView()))) {
 				event.acceptTransferModes(TransferMode.MOVE);
-			event.consume();
+				event.consume();
+			}
 		});
 
 		cell.setOnDragEntered(event -> {
@@ -91,11 +92,8 @@ public final class ListViewUtilities {
 				}
 
 				event.setDropCompleted(true);
-			} else {
-				event.setDropCompleted(false);
+				event.consume();
 			}
-
-			event.consume();
 		});
 
 		cell.setOnDragDone(Event::consume);

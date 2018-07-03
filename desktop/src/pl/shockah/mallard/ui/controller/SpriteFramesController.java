@@ -75,9 +75,10 @@ public class SpriteFramesController extends Controller {
 				setCellFactory(self2 -> new Cell());
 				setItems(project.frames);
 				setOnDragOver(event -> {
-					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles()))
-						event.acceptTransferModes(TransferMode.ANY);
-					event.consume();
+					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles())) {
+						event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
+						event.consume();
+					}
 				});
 				setOnDragDropped(event -> {
 					if (event.getDragboard().hasImage()) {
@@ -89,10 +90,8 @@ public class SpriteFramesController extends Controller {
 							project.frames.add(new SpriteProject.Frame(image));
 						}
 						event.setDropCompleted(true);
-					} else {
-						event.setDropCompleted(false);
+						event.consume();
 					}
-					event.consume();
 				});
 				setOnMouseClicked(event -> {
 					if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)

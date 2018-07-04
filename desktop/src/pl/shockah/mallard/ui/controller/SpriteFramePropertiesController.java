@@ -1,5 +1,7 @@
 package pl.shockah.mallard.ui.controller;
 
+import java.text.DecimalFormat;
+
 import javax.annotation.Nonnull;
 
 import javafx.beans.binding.Bindings;
@@ -57,7 +59,11 @@ public class SpriteFramePropertiesController extends Controller {
 				add(new Label("Origin:"), 0, 0);
 				add(new Button() {{
 					textProperty().bind(Bindings.createStringBinding(
-							() -> String.format("%.0f, %.0f", frame.origin.getValue().x, frame.origin.getValue().y),
+							() -> String.format(
+									"%s, %s",
+									new DecimalFormat("#.##").format(frame.origin.getValue().x),
+									new DecimalFormat("#.##").format(frame.origin.getValue().y)
+							),
 							frame.origin
 					));
 					setOnAction(event -> previewController.setEditingOrigin(true));

@@ -33,6 +33,6 @@ public class SpriteFramePreviewController extends Controller {
 	}
 
 	public void setEditingOrigin(boolean editing) {
-		previewView.setEditingOrigin(editing);
+		previewView.editingOrigin.set(editing);
 	}
 }

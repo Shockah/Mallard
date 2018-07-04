@@ -2,12 +2,15 @@ package pl.shockah.mallard.ui.view;
 
 import javax.annotation.Nonnull;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Vec2;
+import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.unicorn.Math2;
 
@@ -18,7 +21,10 @@ public class SpriteFramePreviewView extends Region {
 	@Nonnull
 	protected final ResizableCanvas canvas;
 
-	protected boolean editingOrigin = false;
+	@Nonnull
+	public final BooleanProperty editingOrigin = new SimpleBooleanProperty(this, "editingOrigin");
+
+	protected boolean additionalOriginPrecision = false;
 
 	@Nonnull
 	protected Vec2 newOrigin = Vec2.zero;
@@ -37,6 +43,7 @@ public class SpriteFramePreviewView extends Region {
 
 		canvas.widthProperty().bind(widthProperty());
 		canvas.heightProperty().bind(heightProperty());
+		canvas.setFocusTraversable(true);
 
 		frame.image.addListener((observable, oldValue, newValue) -> {
 			canvas.redraw();
@@ -49,29 +56,61 @@ public class SpriteFramePreviewView extends Region {
 			double x2 = getRight();
 			double y2 = getBottom();
 
-			double mx = Math2.clamp(event.getX() + scale * 0.5, x1, x2);
-			double my = Math2.clamp(event.getY() + scale * 0.5, y1, y2);
+			double extra = scale * 0.5;
+			if (additionalOriginPrecision)
+				extra /= 4;
+
+			double mx = Math2.clamp(event.getX() + extra, x1, x2);
+			double my = Math2.clamp(event.getY() + extra, y1, y2);
 			double fx = (mx - x1) / (x2 - x1);
 			double fy = (my - y1) / (y2 - y1);
 
-			newOrigin = new Vec2((int)(fx * frame.image.getValue().getWidth()), (int)(fy * frame.image.getValue().getHeight()));
+			double newX = fx * frame.image.getValue().getWidth();
+			double newY = fy * frame.image.getValue().getHeight();
+
+			if (additionalOriginPrecision) {
+				newX *= 4;
+				newY *= 4;
+			}
+
+			newX = (int)newX;
+			newY = (int)newY;
+
+			if (additionalOriginPrecision) {
+				newX /= 4;
+				newY /= 4;
+			}
+
+			newOrigin = new Vec2((float)newX, (float)newY);
 			canvas.redraw();
 		});
 
 		canvas.setOnMouseClicked(event -> {
-			if (editingOrigin) {
+			if (editingOrigin.get()) {
 				if (event.getButton() == MouseButton.PRIMARY) {
 					frame.origin.setValue(newOrigin);
-					editingOrigin = false;
+					editingOrigin.set(false);
 				}
 			}
 		});
-	}
 
-	public void setEditingOrigin(boolean editing) {
-		if (editingOrigin == editing)
-			return;
-		editingOrigin = editing;
+		canvas.setOnKeyPressed(event -> {
+			additionalOriginPrecision = event.isAltDown();
+		});
+
+		canvas.setOnKeyReleased(event -> {
+			additionalOriginPrecision = event.isAltDown();
+		});
+
+		editingOrigin.addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				canvas.setFocusTraversable(true);
+				canvas.requestFocus();
+			} else {
+				Mallard.getStage().requestFocus();
+				canvas.setFocusTraversable(false);
+			}
+		});
 	}
 
 	@Override
@@ -193,7 +232,7 @@ public class SpriteFramePreviewView extends Region {
 		context.setLineWidth(1);
 
 		Vec2 origin = frame.origin.getValue();
-		if (editingOrigin)
+		if (editingOrigin.get())
 			origin = newOrigin;
 
 		context.strokeLine(0, y1 + origin.y * scale, canvas.getWidth(), y1 + origin.y * scale);

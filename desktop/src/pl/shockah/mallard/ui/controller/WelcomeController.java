@@ -40,9 +40,17 @@ public class WelcomeController extends Controller {
 								setPrefHeight(16);
 							}},
 							new Hyperlink("Start a new project") {{
+								visitedProperty().addListener((observable, oldValue, newValue) -> {
+									if (newValue)
+										setVisited(false);
+								});
 								setOnAction(event -> appController.newAction());
 							}},
 							new Hyperlink("Open an existing project") {{
+								visitedProperty().addListener((observable, oldValue, newValue) -> {
+									if (newValue)
+										setVisited(false);
+								});
 								setOnAction(event -> appController.openAction());
 							}}
 					);
@@ -51,49 +59,5 @@ public class WelcomeController extends Controller {
 				}});
 			}});
 		}});
-
-
-//		setView(new BorderPane() {{
-//			Region center = new TitledPane("Welcome", new VBox() {{
-//				getChildren().add(new Label("Mallard") {{
-//					setStyle("-fx-font-size: 2em;");
-//				}});
-//			}}) {{
-//				setCollapsible(false);
-//			}};
-//
-//			setCenter(center);
-//
-//			setLeft(new Region() {{
-//				prefWidthProperty().bind(center.widthProperty());
-//				prefHeightProperty().bind(center.heightProperty());
-//			}});
-//			setRight(new Region() {{
-//				prefWidthProperty().bind(center.widthProperty());
-//				prefHeightProperty().bind(center.heightProperty());
-//			}});
-//			setTop(new Region() {{
-//				prefWidthProperty().bind(center.widthProperty());
-//				prefHeightProperty().bind(center.heightProperty());
-//			}});
-//			setBottom(new Region() {{
-//				prefWidthProperty().bind(center.widthProperty());
-//				prefHeightProperty().bind(center.heightProperty());
-//			}});
-//		}});
-
-
-
-//		setView(new TitledPane("Welcome", new Pane() {{
-//			setPrefWidth(0.0);
-//			setPrefHeight(0.0);
-//
-//			getChildren().add(new Label("Mallard") {{
-//				setStyle("-fx-font-size: 2em;");
-//			}});
-//		}}) {{
-//
-//			setCollapsible(false);
-//		}});
 	}
 }

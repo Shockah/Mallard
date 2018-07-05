@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.shockah.godwit.geom.Shape;
-import pl.shockah.mallard.ui.controller.sprite.ShapeEditorController;
+import pl.shockah.mallard.ui.controller.sprite.editor.ShapeEditorController;
 
 public class ShapeManager {
 	@Nonnull

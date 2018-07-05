@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller.sprite;
+package pl.shockah.mallard.ui.controller.sprite.editor;
 
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.ui.controller.Controller;

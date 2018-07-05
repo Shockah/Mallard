@@ -16,7 +16,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
-import pl.shockah.mallard.ui.controller.sprite.frame.SpriteFrameEditor;
+import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 
 public class SpriteProject extends Project {
 	@Nonnull

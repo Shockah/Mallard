@@ -34,19 +34,20 @@ public class SpriteController extends Controller {
 			setLeft(new VBox(8) {{
 				setPadding(new Insets(8));
 
-				getChildren().add(new TitledPane("Frames", new HBox() {{
-					setPadding(new Insets(4));
-					getChildren().add(framesController.getView());
-				}}) {{
-					setCollapsible(false);
-				}});
-
-				getChildren().add(new TitledPane("Animations", new HBox() {{
-					setPadding(new Insets(4));
-					getChildren().add(animationsController.getView());
-				}}) {{
-					setCollapsible(false);
-				}});
+				getChildren().addAll(
+						new TitledPane("Frames", new HBox() {{
+							setPadding(new Insets(4));
+							getChildren().add(framesController.getView());
+						}}) {{
+							setCollapsible(false);
+						}},
+						new TitledPane("Animations", new HBox() {{
+							setPadding(new Insets(4));
+							getChildren().add(animationsController.getView());
+						}}) {{
+							setCollapsible(false);
+						}}
+				);
 			}});
 		}});
 	}

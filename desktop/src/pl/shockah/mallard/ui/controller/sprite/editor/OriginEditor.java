@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller.sprite.frame;
+package pl.shockah.mallard.ui.controller.sprite.editor;
 
 import javax.annotation.Nonnull;
 

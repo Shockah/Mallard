@@ -40,77 +40,81 @@ public class SpriteFramesController extends Controller {
 
 		setView(new VBox(4) {{
 			setMaxHeight(Double.MAX_VALUE);
-			getChildren().add(new HBox(4) {{
-				getChildren().add(new Button("Add") {{
-					setMaxWidth(Double.MAX_VALUE);
-					HBox.setHgrow(this, Priority.ALWAYS);
-					setOnAction(event -> {
-						FileChooser chooser = new FileChooser();
-						chooser.setTitle("Add frame");
-						chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Loss-less images", "*.png", "*.bmp", "*.gif"));
-						chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
+			getChildren().addAll(
+					new HBox(4) {{
+						getChildren().addAll(
+								new Button("Add") {{
+									setMaxWidth(Double.MAX_VALUE);
+									HBox.setHgrow(this, Priority.ALWAYS);
+									setOnAction(event -> {
+										FileChooser chooser = new FileChooser();
+										chooser.setTitle("Add frame");
+										chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Loss-less images", "*.png", "*.bmp", "*.gif"));
+										chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
 
-						List<File> files = chooser.showOpenMultipleDialog(Mallard.getStage());
-						if (files != null) {
-							for (File file : files) {
-								Image image = new Image(file.toURI().toString());
-								project.frames.add(new SpriteProject.Frame(image));
+										List<File> files = chooser.showOpenMultipleDialog(Mallard.getStage());
+										if (files != null) {
+											for (File file : files) {
+												Image image = new Image(file.toURI().toString());
+												project.frames.add(new SpriteProject.Frame(image));
+											}
+										}
+									});
+								}},
+								new Button("Remove") {{
+									removeButton.value = this;
+									setMaxWidth(Double.MAX_VALUE);
+									HBox.setHgrow(this, Priority.ALWAYS);
+									setDisable(true);
+									setOnAction(event -> {
+										project.frames.remove(listView.value.getSelectionModel().selectedItemProperty().get());
+									});
+								}}
+						);
+					}},
+					new ListView<SpriteProject.Frame>() {{
+						ListView<SpriteProject.Frame> self = this;
+						listView.value = this;
+						setMaxHeight(Double.MAX_VALUE);
+						setCellFactory(self2 -> new Cell());
+						setItems(project.frames);
+						setOnDragOver(event -> {
+							if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles())) {
+								event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
+								event.consume();
 							}
-						}
-					});
-				}});
-				getChildren().add(new Button("Remove") {{
-					removeButton.value = this;
-					setMaxWidth(Double.MAX_VALUE);
-					HBox.setHgrow(this, Priority.ALWAYS);
-					setDisable(true);
-					setOnAction(event -> {
-						project.frames.remove(listView.value.getSelectionModel().selectedItemProperty().get());
-					});
-				}});
-			}});
-			getChildren().add(new ListView<SpriteProject.Frame>() {{
-				ListView<SpriteProject.Frame> self = this;
-				listView.value = this;
-				setMaxHeight(Double.MAX_VALUE);
-				setCellFactory(self2 -> new Cell());
-				setItems(project.frames);
-				setOnDragOver(event -> {
-					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles())) {
-						event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
-						event.consume();
-					}
-				});
-				setOnDragDropped(event -> {
-					if (event.getDragboard().hasImage()) {
-						project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
-						event.setDropCompleted(true);
-					} else if (event.getDragboard().hasFiles()) {
-						for (File file : event.getDragboard().getFiles()) {
-							Image image = new Image(file.toURI().toString());
-							project.frames.add(new SpriteProject.Frame(image));
-						}
-						event.setDropCompleted(true);
-						event.consume();
-					}
-				});
-				setOnMouseClicked(event -> {
-					if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
-						return;
+						});
+						setOnDragDropped(event -> {
+							if (event.getDragboard().hasImage()) {
+								project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
+								event.setDropCompleted(true);
+							} else if (event.getDragboard().hasFiles()) {
+								for (File file : event.getDragboard().getFiles()) {
+									Image image = new Image(file.toURI().toString());
+									project.frames.add(new SpriteProject.Frame(image));
+								}
+								event.setDropCompleted(true);
+								event.consume();
+							}
+						});
+						setOnMouseClicked(event -> {
+							if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
+								return;
 
-					SpriteProject.Frame selected = getSelectionModel().getSelectedItem();
-					if (selected == null)
-						return;
+							SpriteProject.Frame selected = getSelectionModel().getSelectedItem();
+							if (selected == null)
+								return;
 
-					SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
-					spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getView());
-					spriteController.setCenterPanel(previewController.getView());
-				});
+							SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
+							spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getView());
+							spriteController.setCenterPanel(previewController.getView());
+						});
 
-				getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-					removeButton.value.setDisable(newValue == null);
-				});
-			}});
+						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+							removeButton.value.setDisable(newValue == null);
+						});
+					}}
+			);
 		}});
 	}
 

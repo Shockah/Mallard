@@ -40,42 +40,44 @@ public class SpriteFramePropertiesController extends Controller {
 		setView(new VBox(8) {{
 			setPadding(new Insets(8));
 
-			getChildren().add(new TitledPane("Actions", new VBox(4) {{
-				setPadding(new Insets(4));
+			getChildren().addAll(
+					new TitledPane("Actions", new VBox(4) {{
+						setPadding(new Insets(4));
 
-				getChildren().add(new Button("Trim") {{
-					setMaxWidth(Double.MAX_VALUE);
-					setOnAction(event -> frame.trimImage());
-				}});
-			}}) {{
-				setCollapsible(false);
-			}});
+						getChildren().addAll(
+								new Button("Trim") {{
+									setMaxWidth(Double.MAX_VALUE);
+									setOnAction(event -> frame.trimImage());
+								}}
+						);
+					}}) {{
+						setCollapsible(false);
+					}},
+					new TitledPane("Properties", new GridPane() {{
+						setPadding(new Insets(4));
+						setHgap(4);
+						setVgap(4);
+						setPrefWidth(250);
 
-			getChildren().add(new TitledPane("Properties", new GridPane() {{
-				setPadding(new Insets(4));
-				setHgap(4);
-				setVgap(4);
-				setPrefWidth(250);
-
-				add(new Label("Origin:"), 0, 0);
-				add(new Button() {{
-					textProperty().bind(Bindings.createStringBinding(
-							() -> String.format(
-									"%s, %s",
-									new DecimalFormat("#.##").format(frame.origin.getValue().x),
-									new DecimalFormat("#.##").format(frame.origin.getValue().y)
-							),
-							frame.origin
-					));
-					setOnAction(event -> previewController.originEditor.setActive());
-				}}, 1, 0);
-			}}) {{
-				setCollapsible(false);
-			}});
-
-			getChildren().add(new TitledPane("Shapes", new SpriteFrameShapesController(project, frame).getView()) {{
-				setCollapsible(false);
-			}});
+						add(new Label("Origin:"), 0, 0);
+						add(new Button() {{
+							textProperty().bind(Bindings.createStringBinding(
+									() -> String.format(
+											"%s, %s",
+											new DecimalFormat("#.##").format(frame.origin.getValue().x),
+											new DecimalFormat("#.##").format(frame.origin.getValue().y)
+									),
+									frame.origin
+							));
+							setOnAction(event -> previewController.originEditor.setActive());
+						}}, 1, 0);
+					}}) {{
+						setCollapsible(false);
+					}},
+					new TitledPane("Shapes", new SpriteFrameShapesController(project, frame).getView()) {{
+						setCollapsible(false);
+					}}
+			);
 		}});
 	}
 

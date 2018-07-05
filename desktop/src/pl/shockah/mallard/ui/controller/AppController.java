@@ -33,8 +33,10 @@ public class AppController extends Controller {
 
 		setView(new VBox() {{
 			setMaxHeight(Double.MAX_VALUE);
-			getChildren().add(new MenuBarController(AppController.this).getView());
-			getChildren().add(projectSpecificContainer);
+			getChildren().addAll(
+					new MenuBarController(AppController.this).getView(),
+					projectSpecificContainer
+			);
 		}});
 
 		BindUtilities.bind(project, project -> setupProjectSpecificContainer());

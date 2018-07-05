@@ -29,40 +29,44 @@ public class SpriteAnimationsController extends Controller {
 
 		setView(new VBox(4) {{
 			setMaxHeight(Double.MAX_VALUE);
-			getChildren().add(new HBox(4) {{
-				getChildren().add(new Button("Add") {{
-					setMaxWidth(Double.MAX_VALUE);
-					HBox.setHgrow(this, Priority.ALWAYS);
-					setOnAction(event -> {
-						new TextInputDialog() {{
-							setTitle("Add animation");
-							setHeaderText("Add animation");
-							setContentText("Name:");
-						}}.showAndWait().ifPresent(result -> {
-							project.animations.add(new SpriteProject.Animation.Entry(result, new SpriteProject.Animation()));
-						});
-					});
-				}});
-				getChildren().add(new Button("Remove") {{
-					removeButton.value = this;
-					setMaxWidth(Double.MAX_VALUE);
-					HBox.setHgrow(this, Priority.ALWAYS);
-					setDisable(true);
-					setOnAction(event -> {
-						project.animations.remove(listView.value.getSelectionModel().selectedItemProperty().get());
-					});
-				}});
-			}});
-			getChildren().add(new ListView<SpriteProject.Animation.Entry>() {{
-				listView.value = this;
-				setMaxHeight(Double.MAX_VALUE);
-				setCellFactory(self2 -> new Cell());
-				setItems(project.animations);
+			getChildren().addAll(
+					new HBox(4) {{
+						getChildren().addAll(
+								new Button("Add") {{
+									setMaxWidth(Double.MAX_VALUE);
+									HBox.setHgrow(this, Priority.ALWAYS);
+									setOnAction(event -> {
+										new TextInputDialog() {{
+											setTitle("Add animation");
+											setHeaderText("Add animation");
+											setContentText("Name:");
+										}}.showAndWait().ifPresent(result -> {
+											project.animations.add(new SpriteProject.Animation.Entry(result, new SpriteProject.Animation()));
+										});
+									});
+								}},
+								new Button("Remove") {{
+									removeButton.value = this;
+									setMaxWidth(Double.MAX_VALUE);
+									HBox.setHgrow(this, Priority.ALWAYS);
+									setDisable(true);
+									setOnAction(event -> {
+										project.animations.remove(listView.value.getSelectionModel().selectedItemProperty().get());
+									});
+								}}
+						);
+					}},
+					new ListView<SpriteProject.Animation.Entry>() {{
+						listView.value = this;
+						setMaxHeight(Double.MAX_VALUE);
+						setCellFactory(self2 -> new Cell());
+						setItems(project.animations);
 
-				getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-					removeButton.value.setDisable(newValue == null);
-				});
-			}});
+						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+							removeButton.value.setDisable(newValue == null);
+						});
+					}}
+			);
 		}});
 	}
 

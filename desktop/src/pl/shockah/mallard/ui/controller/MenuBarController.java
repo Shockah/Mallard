@@ -16,18 +16,20 @@ public class MenuBarController extends Controller {
 			setUseSystemMenuBar(true);
 
 			getMenus().add(new Menu("File") {{
-				getItems().add(new MenuItem("New Project") {{
-					setOnAction(event -> appController.newAction());
-				}});
-				getItems().add(new MenuItem("Open") {{
-					setOnAction(event -> appController.openAction());
-				}});
-				getItems().add(new MenuItem("Save") {{
-					setOnAction(event -> appController.saveAction());
-				}});
-				getItems().add(new MenuItem("Save As...") {{
-					setOnAction(event -> appController.saveAsAction());
-				}});
+				getItems().addAll(
+						new MenuItem("New Project") {{
+							setOnAction(event -> appController.newAction());
+						}},
+						new MenuItem("Open") {{
+							setOnAction(event -> appController.openAction());
+						}},
+						new MenuItem("Save") {{
+							setOnAction(event -> appController.saveAction());
+						}},
+						new MenuItem("Save As...") {{
+							setOnAction(event -> appController.saveAsAction());
+						}}
+				);
 			}});
 		}});
 	}

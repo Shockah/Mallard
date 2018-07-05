@@ -74,7 +74,7 @@ public class SpriteFramePropertiesController extends Controller {
 					}}) {{
 						setCollapsible(false);
 					}},
-					new TitledPane("Shapes", new SpriteFrameShapesController(project, frame).getView()) {{
+					new TitledPane("Shapes", new SpriteFrameShapesController(previewController, project, frame).getView()) {{
 						setCollapsible(false);
 					}}
 			);

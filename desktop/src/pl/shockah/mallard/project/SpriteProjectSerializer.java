@@ -14,18 +14,18 @@ import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.jay.JSONList;
 import pl.shockah.jay.JSONObject;
-import pl.shockah.mallard.JSONSerializationManager;
+import pl.shockah.mallard.ShapeManager;
 import pl.shockah.unicorn.UnexpectedException;
 
 public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 	private static final int VERSION = 1;
 
 	@Nonnull
-	protected final JSONSerializationManager<Shape.Filled> shapeSerializationManager;
+	protected final ShapeManager shapeManager;
 
-	public SpriteProjectSerializer(@Nonnull JSONSerializationManager<Shape.Filled> shapeSerializationManager) {
+	public SpriteProjectSerializer(@Nonnull ShapeManager shapeManager) {
 		super("sprite");
-		this.shapeSerializationManager = shapeSerializationManager;
+		this.shapeManager = shapeManager;
 	}
 
 	@Nonnull
@@ -53,8 +53,8 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 				if (!frame.shapes.isEmpty()) {
 					JSONObject jSubspriteShapes = jSubsprite.putNewObject("shapes");
-					for (SpriteProject.Frame.ShapeEntry shapeEntry : frame.shapes) {
-						jSubspriteShapes.put(shapeEntry.name, shapeSerializationManager.serialize(shapeEntry.shape));
+					for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.shapes) {
+						jSubspriteShapes.put(shapeEntry.name, shapeManager.jsonSerializationManager.serialize(shapeEntry.shape.getValue()));
 					}
 				}
 			}
@@ -109,7 +109,8 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 				if (jSubsprite.containsKey("shapes")) {
 					for (Map.Entry<String, Object> jSubspriteShapeEntry : jSubsprite.getObject("shapes").entrySet()) {
 						JSONObject jSubspriteShape = (JSONObject) jSubspriteShapeEntry.getValue();
-						frame.shapes.add(new SpriteProject.Frame.ShapeEntry(jSubspriteShapeEntry.getKey(), shapeSerializationManager.deserialize(jSubspriteShape)));
+						String typeName = jSubspriteShapeEntry.getKey();
+						frame.shapes.add(new SpriteProject.Frame.ShapeEntry<Shape.Filled>(shapeManager.getEntry(typeName), typeName, shapeManager.jsonSerializationManager.deserialize(jSubspriteShape)));
 					}
 				}
 

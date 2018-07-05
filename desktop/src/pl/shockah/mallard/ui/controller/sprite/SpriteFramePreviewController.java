@@ -1,5 +1,8 @@
 package pl.shockah.mallard.ui.controller.sprite;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import javafx.beans.value.ChangeListener;
@@ -7,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.PixelReader;
@@ -14,15 +18,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import lombok.experimental.var;
+import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
 import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.controller.sprite.editor.OriginEditor;
+import pl.shockah.mallard.ui.controller.sprite.editor.ShapeEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 import pl.shockah.mallard.ui.view.ResizableCanvas;
 import pl.shockah.unicorn.Math2;
 import pl.shockah.unicorn.func.Action2;
+import pl.shockah.unicorn.func.Func2;
 
 public class SpriteFramePreviewController extends Controller {
 	@Nonnull
@@ -40,7 +48,13 @@ public class SpriteFramePreviewController extends Controller {
 	protected boolean additionalEditingPrecision = false;
 
 	@Nonnull
-	private final ChangeListener<? super SpriteFrameEditor> changeListener;
+	private final ChangeListener<? super SpriteFrameEditor> currentEditorListener;
+
+	@Nonnull
+	private final ListChangeListener<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>> shapesListListener;
+
+	@Nonnull
+	private final Map<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>, ShapeEditor<? extends Shape.Filled>> shapeToEditorMap = new HashMap<>();
 
 	@Nonnull
 	public final ObservableList<SpriteFrameEditor> editors = FXCollections.observableArrayList();
@@ -107,7 +121,7 @@ public class SpriteFramePreviewController extends Controller {
 			additionalEditingPrecision = event.isAltDown();
 		});
 
-		changeListener = (observable, oldValue, newValue) -> {
+		currentEditorListener = (observable, oldValue, newValue) -> {
 			if (oldValue == null && newValue != null) {
 				canvas.setFocusTraversable(true);
 				canvas.requestFocus();
@@ -117,12 +131,16 @@ public class SpriteFramePreviewController extends Controller {
 			}
 		};
 
-		getView().parentProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue == null && newValue != null)
-				frame.currentEditor.addListener(changeListener);
-			else if (oldValue != null && newValue == null)
-				frame.currentEditor.removeListener(changeListener);
-		});
+		shapesListListener = c -> {
+			while (c.next()) {
+				for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : c.getRemoved()) {
+					editors.remove(shapeToEditorMap.get(shapeEntry));
+				}
+				for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : c.getAddedSubList()) {
+					editors.add(createEditor(shapeEntry));
+				}
+			}
+		};
 
 		editors.addListener((ListChangeListener<SpriteFrameEditor>) c -> {
 			while (c.next()) {
@@ -136,6 +154,34 @@ public class SpriteFramePreviewController extends Controller {
 		});
 
 		editors.add(originEditor = new OriginEditor(frame));
+	}
+
+	@Override
+	protected void onAddedToScene(@Nonnull Scene scene) {
+		super.onAddedToScene(scene);
+		frame.currentEditor.addListener(currentEditorListener);
+
+		for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.shapes) {
+			editors.add(createEditor(shapeEntry));
+		}
+		frame.shapes.addListener(shapesListListener);
+	}
+
+	@Override
+	protected void onRemovedFromScene(@Nonnull Scene scene) {
+		super.onRemovedFromScene(scene);
+		frame.currentEditor.removeListener(currentEditorListener);
+		frame.shapes.removeListener(shapesListListener);
+	}
+
+	@Nonnull
+	@SuppressWarnings("unchecked")
+	private ShapeEditor<? extends Shape.Filled> createEditor(@Nonnull SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry) {
+		return shapeToEditorMap.computeIfAbsent(shapeEntry, key -> {
+			Func2<?, ?, ?> wildcardFactory = key.shapeManagerEntry.editorFactory;
+			var rawFactory = (Func2<SpriteProject.Frame, SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>, ShapeEditor<Shape.Filled>>) wildcardFactory;
+			return rawFactory.call(frame, key);
+		});
 	}
 
 	private void calculateMousePositionAndProceed(double eventX, double eventY, @Nonnull Action2<Double, Double> func) {

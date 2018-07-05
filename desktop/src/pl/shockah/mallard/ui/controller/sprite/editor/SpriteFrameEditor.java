@@ -42,6 +42,7 @@ public class SpriteFrameEditor {
 	}
 
 	public void onMouseClick(@Nonnull SpriteFramePreviewController previewController, double mouseX, double mouseY, @Nonnull MouseButton button) {
+		previewController.canvas.requestFocus();
 	}
 
 	public void draw(@Nonnull SpriteFramePreviewController previewController, @Nonnull GraphicsContext context) {

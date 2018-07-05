@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -14,23 +15,31 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
+import pl.shockah.mallard.ShapeManager;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.controller.Controller;
+import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 import pl.shockah.unicorn.collection.Box;
 
 public class SpriteFrameShapesController extends Controller {
+	@Nonnull
+	public final SpriteFramePreviewController previewController;
+
 	@Nonnull
 	public final SpriteProject project;
 
 	@Nonnull
 	public final SpriteProject.Frame frame;
 
-	public SpriteFrameShapesController(@Nonnull SpriteProject project, @Nonnull SpriteProject.Frame frame) {
+	@SuppressWarnings("unchecked")
+	public SpriteFrameShapesController(@Nonnull SpriteFramePreviewController previewController, @Nonnull SpriteProject project, @Nonnull SpriteProject.Frame frame) {
+		this.previewController = previewController;
 		this.project = project;
 		this.frame = frame;
 
-		Box<ListView<SpriteProject.Frame.ShapeEntry>> listView = new Box<>();
+		Box<ListView<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
 		setView(new VBox(4) {{
@@ -51,8 +60,20 @@ public class SpriteFrameShapesController extends Controller {
 																setHeaderText(String.format("Add `%s` shape", entry.name));
 																setContentText("Name:");
 															}}.showAndWait().ifPresent(result -> {
-																//TODO: shape controller creation
-																//frame.shapes.add(new SpriteProject.Frame.ShapeEntry(result, entry.))
+																ShapeManager.Entry<Shape.Filled> rawEntry = (ShapeManager.Entry<Shape.Filled>) entry;
+
+																ListChangeListener<SpriteFrameEditor> temporaryListener = c -> {
+																	while (c.next()) {
+																		for (SpriteFrameEditor editor : c.getAddedSubList()) {
+																			editor.setActive();
+																			break;
+																		}
+																	}
+																};
+
+																previewController.editors.addListener(temporaryListener);
+																frame.shapes.add(new SpriteProject.Frame.ShapeEntry<>(rawEntry, result, null));
+																previewController.editors.removeListener(temporaryListener);
 															});
 														});
 													}})
@@ -70,7 +91,7 @@ public class SpriteFrameShapesController extends Controller {
 								}}
 						);
 					}},
-					new ListView<SpriteProject.Frame.ShapeEntry>() {{
+					new ListView<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>>() {{
 						listView.value = this;
 						setMaxHeight(Double.MAX_VALUE);
 						setCellFactory(self2 -> new Cell());
@@ -84,7 +105,7 @@ public class SpriteFrameShapesController extends Controller {
 		}});
 	}
 
-	public static final class Cell extends ListCell<SpriteProject.Frame.ShapeEntry> {
+	public static final class Cell extends ListCell<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>> {
 		public Cell() {
 			super();
 		}

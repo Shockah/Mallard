@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,6 +17,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
+import pl.shockah.mallard.ShapeManager;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 
 public class SpriteProject extends Project {
@@ -33,7 +35,7 @@ public class SpriteProject extends Project {
 		public final Property<Vec2> origin = new SimpleObjectProperty<>(this, "origin");
 
 		@Nonnull
-		public final ObservableList<ShapeEntry> shapes = FXCollections.observableArrayList();
+		public final ObservableList<ShapeEntry<? extends Shape.Filled>> shapes = FXCollections.observableArrayList();
 
 		@Nonnull
 		public final Property<SpriteFrameEditor> currentEditor = new SimpleObjectProperty<>(this, "currentEditor");
@@ -114,16 +116,24 @@ public class SpriteProject extends Project {
 			origin.setValue(origin.getValue().subtract(x1, y1));
 		}
 
-		public static class ShapeEntry {
+		public static class ShapeEntry<S extends Shape.Filled> {
+			@Nonnull
+			public final ShapeManager.Entry<S> shapeManagerEntry;
+
 			@Nonnull
 			public final String name;
 
 			@Nonnull
-			public final Shape.Filled shape;
+			public final Property<S> shape = new SimpleObjectProperty<>();
 
-			public ShapeEntry(@Nonnull String name, @Nonnull Shape.Filled shape) {
+			@Nonnull
+			public final Property<Color> color = new SimpleObjectProperty<>();
+
+			public ShapeEntry(@Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
+				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
-				this.shape = shape;
+				this.shape.setValue(shape);
+				color.setValue(Color.RED);
 			}
 		}
 	}

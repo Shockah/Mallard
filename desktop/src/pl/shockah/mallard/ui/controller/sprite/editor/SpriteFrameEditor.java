@@ -38,6 +38,9 @@ public class SpriteFrameEditor {
 	public void onBecameInactive() {
 	}
 
+	public void onCancel(@Nonnull SpriteFramePreviewController previewController) {
+	}
+
 	public void onMouseMove(@Nonnull SpriteFramePreviewController previewController, double mouseX, double mouseY) {
 	}
 

@@ -13,6 +13,8 @@ import pl.shockah.mallard.project.Project;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.project.SpriteProjectSerializer;
 import pl.shockah.mallard.ui.controller.AppController;
+import pl.shockah.mallard.ui.controller.sprite.editor.CircleEditor;
+import pl.shockah.mallard.ui.controller.sprite.editor.PolygonEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.RectangleEditor;
 
 public class Mallard extends Application {
@@ -31,8 +33,8 @@ public class Mallard extends Application {
 
 	private void initialize() {
 		shapeManager.register("Rectangle", Rectangle.class, new ShapeSerializer.RectangleSerializer(), RectangleEditor::new);
-		shapeManager.register("Circle", Circle.class, new ShapeSerializer.CircleSerializer(), (frame, entry) -> null);
-		shapeManager.register("Polygon", Polygon.class, new ShapeSerializer.PolygonSerializer(), (frame, entry) -> null);
+		shapeManager.register("Circle", Circle.class, new ShapeSerializer.CircleSerializer(), CircleEditor::new);
+		shapeManager.register("Polygon", Polygon.class, new ShapeSerializer.PolygonSerializer(), PolygonEditor::new);
 
 		projectSerializationManager.register(SpriteProject.class, new SpriteProjectSerializer(shapeManager));
 	}

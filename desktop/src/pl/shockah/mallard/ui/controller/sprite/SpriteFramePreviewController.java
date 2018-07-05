@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.PixelReader;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -119,6 +120,15 @@ public class SpriteFramePreviewController extends Controller {
 
 		canvas.setOnKeyReleased(event -> {
 			additionalEditingPrecision = event.isAltDown();
+
+			SpriteFrameEditor editor = frame.currentEditor.getValue();
+			if (editor == null)
+				return;
+
+			if (event.getCode() == KeyCode.ESCAPE) {
+				frame.currentEditor.setValue(null);
+				editor.onCancel(SpriteFramePreviewController.this);
+			}
 		});
 
 		currentEditorListener = (observable, oldValue, newValue) -> {

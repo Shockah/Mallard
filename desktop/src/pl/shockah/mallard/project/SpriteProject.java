@@ -1,9 +1,7 @@
 package pl.shockah.mallard.project;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -18,6 +16,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
+import pl.shockah.mallard.ui.controller.sprite.frame.SpriteFrameEditor;
 
 public class SpriteProject extends Project {
 	@Nonnull
@@ -28,13 +27,16 @@ public class SpriteProject extends Project {
 
 	public static class Frame {
 		@Nonnull
-		public Property<Image> image = new SimpleObjectProperty<>(this, "image");
+		public final Property<Image> image = new SimpleObjectProperty<>(this, "image");
 
 		@Nonnull
-		public Property<Vec2> origin = new SimpleObjectProperty<>(this, "origin");
+		public final Property<Vec2> origin = new SimpleObjectProperty<>(this, "origin");
 
 		@Nonnull
-		public final Map<String, Shape.Filled> shapes = new LinkedHashMap<>();
+		public final ObservableList<ShapeEntry> shapes = FXCollections.observableArrayList();
+
+		@Nonnull
+		public final Property<SpriteFrameEditor> currentEditor = new SimpleObjectProperty<>(this, "currentEditor");
 
 		public Frame(@Nonnull Image image) {
 			this.image.setValue(image);
@@ -110,6 +112,19 @@ public class SpriteProject extends Project {
 			this.image.setValue(result);
 
 			origin.setValue(origin.getValue().subtract(x1, y1));
+		}
+
+		public static class ShapeEntry {
+			@Nonnull
+			public final String name;
+
+			@Nonnull
+			public final Shape.Filled shape;
+
+			public ShapeEntry(@Nonnull String name, @Nonnull Shape.Filled shape) {
+				this.name = name;
+				this.shape = shape;
+			}
 		}
 	}
 

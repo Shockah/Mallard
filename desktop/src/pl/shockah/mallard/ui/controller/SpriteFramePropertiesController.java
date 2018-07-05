@@ -66,9 +66,13 @@ public class SpriteFramePropertiesController extends Controller {
 							),
 							frame.origin
 					));
-					setOnAction(event -> previewController.setEditingOrigin(true));
+					setOnAction(event -> previewController.originEditor.setActive());
 				}}, 1, 0);
 			}}) {{
+				setCollapsible(false);
+			}});
+
+			getChildren().add(new TitledPane("Shapes", new SpriteFrameShapesController(project, frame).getView()) {{
 				setCollapsible(false);
 			}});
 		}});

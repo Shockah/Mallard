@@ -57,31 +57,10 @@ public class SpriteAnimationsController extends Controller {
 				}});
 			}});
 			getChildren().add(new ListView<SpriteProject.Animation.Entry>() {{
-				ListView<SpriteProject.Animation.Entry> self = this;
 				listView.value = this;
 				setMaxHeight(Double.MAX_VALUE);
 				setCellFactory(self2 -> new Cell());
 				setItems(project.animations);
-				setOnDragOver(event -> {
-					if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles()))
-						event.acceptTransferModes(TransferMode.ANY);
-					event.consume();
-				});
-				setOnDragDropped(event -> {
-					if (event.getDragboard().hasImage()) {
-						project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
-						event.setDropCompleted(true);
-					} else if (event.getDragboard().hasFiles()) {
-						for (File file : event.getDragboard().getFiles()) {
-							Image image = new Image(file.toURI().toString());
-							project.frames.add(new SpriteProject.Frame(image));
-						}
-						event.setDropCompleted(true);
-					} else {
-						event.setDropCompleted(false);
-					}
-					event.consume();
-				});
 
 				getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 					removeButton.value.setDisable(newValue == null);

@@ -53,8 +53,8 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 				if (!frame.shapes.isEmpty()) {
 					JSONObject jSubspriteShapes = jSubsprite.putNewObject("shapes");
-					for (Map.Entry<String, Shape.Filled> shapeEntry : frame.shapes.entrySet()) {
-						jSubspriteShapes.put(shapeEntry.getKey(), shapeSerializationManager.serialize(shapeEntry.getValue()));
+					for (SpriteProject.Frame.ShapeEntry shapeEntry : frame.shapes) {
+						jSubspriteShapes.put(shapeEntry.name, shapeSerializationManager.serialize(shapeEntry.shape));
 					}
 				}
 			}
@@ -109,7 +109,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 				if (jSubsprite.containsKey("shapes")) {
 					for (Map.Entry<String, Object> jSubspriteShapeEntry : jSubsprite.getObject("shapes").entrySet()) {
 						JSONObject jSubspriteShape = (JSONObject) jSubspriteShapeEntry.getValue();
-						frame.shapes.put(jSubspriteShapeEntry.getKey(), shapeSerializationManager.deserialize(jSubspriteShape));
+						frame.shapes.add(new SpriteProject.Frame.ShapeEntry(jSubspriteShapeEntry.getKey(), shapeSerializationManager.deserialize(jSubspriteShape)));
 					}
 				}
 

@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import pl.shockah.godwit.geom.Circle;
 import pl.shockah.godwit.geom.Rectangle;
-import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.polygon.Polygon;
 import pl.shockah.mallard.project.Project;
 import pl.shockah.mallard.project.SpriteProject;
@@ -20,6 +19,9 @@ public class Mallard extends Application {
 	private static Stage stage;
 
 	@Nonnull
+	public static final ShapeManager shapeManager = new ShapeManager();
+
+	@Nonnull
 	public static final JSONSerializationManager<Project> projectSerializationManager = new JSONSerializationManager<>();
 
 	public static void main(String[] args) {
@@ -27,12 +29,11 @@ public class Mallard extends Application {
 	}
 
 	private void initialize() {
-		JSONSerializationManager<Shape.Filled> shapeSerializationManager = new JSONSerializationManager<>();
-		shapeSerializationManager.register(Rectangle.class, new ShapeSerializer.RectangleSerializer());
-		shapeSerializationManager.register(Circle.class, new ShapeSerializer.CircleSerializer());
-		shapeSerializationManager.register(Polygon.class, new ShapeSerializer.PolygonSerializer());
+		shapeManager.register("Rectangle", Rectangle.class, new ShapeSerializer.RectangleSerializer(), shape -> null);
+		shapeManager.register("Circle", Circle.class, new ShapeSerializer.CircleSerializer(), shape -> null);
+		shapeManager.register("Polygon", Polygon.class, new ShapeSerializer.PolygonSerializer(), shape -> null);
 
-		projectSerializationManager.register(SpriteProject.class, new SpriteProjectSerializer(shapeSerializationManager));
+		projectSerializationManager.register(SpriteProject.class, new SpriteProjectSerializer(shapeManager.jsonSerializationManager));
 	}
 
 	@Override

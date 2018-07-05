@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import javax.annotation.Nonnull;
 
@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.controller.Controller;
 
 public class SpriteController extends Controller {
 	@Nonnull

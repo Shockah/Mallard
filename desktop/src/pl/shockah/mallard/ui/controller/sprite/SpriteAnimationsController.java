@@ -1,6 +1,4 @@
-package pl.shockah.mallard.ui.controller;
-
-import java.io.File;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import javax.annotation.Nonnull;
 
@@ -8,12 +6,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.image.Image;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
 
 public class SpriteAnimationsController extends Controller {

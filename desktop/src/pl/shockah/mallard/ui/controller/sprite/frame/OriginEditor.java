@@ -7,7 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.controller.SpriteFramePreviewController;
+import pl.shockah.mallard.ui.controller.sprite.SpriteFramePreviewController;
 
 public class OriginEditor extends SpriteFrameEditor {
 	@Nonnull

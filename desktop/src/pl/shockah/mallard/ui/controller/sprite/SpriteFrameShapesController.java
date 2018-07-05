@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
 
 public class SpriteFrameShapesController extends Controller {

@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import java.text.DecimalFormat;
 
@@ -14,6 +14,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import pl.shockah.mallard.project.SpriteProject;
+import pl.shockah.mallard.ui.controller.Controller;
 
 public class SpriteFramePropertiesController extends Controller {
 	@Nonnull

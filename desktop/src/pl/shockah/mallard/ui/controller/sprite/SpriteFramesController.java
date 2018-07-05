@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import java.io.File;
 import java.util.List;
@@ -21,6 +21,7 @@ import javafx.stage.FileChooser;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.ListViewUtilities;
+import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
 
 public class SpriteFramesController extends Controller {

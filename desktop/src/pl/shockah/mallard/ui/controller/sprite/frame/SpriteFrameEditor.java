@@ -6,7 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.controller.SpriteFramePreviewController;
+import pl.shockah.mallard.ui.controller.sprite.SpriteFramePreviewController;
 
 public class SpriteFrameEditor {
 	@Nonnull

@@ -17,6 +17,7 @@ import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.Project;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
+import pl.shockah.mallard.ui.controller.sprite.SpriteController;
 import pl.shockah.unicorn.UnexpectedException;
 
 public class AppController extends Controller {

@@ -1,4 +1,4 @@
-package pl.shockah.mallard.ui.controller;
+package pl.shockah.mallard.ui.controller.sprite;
 
 import javax.annotation.Nonnull;
 
@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
+import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.controller.sprite.frame.OriginEditor;
 import pl.shockah.mallard.ui.controller.sprite.frame.SpriteFrameEditor;
 import pl.shockah.mallard.ui.view.ResizableCanvas;

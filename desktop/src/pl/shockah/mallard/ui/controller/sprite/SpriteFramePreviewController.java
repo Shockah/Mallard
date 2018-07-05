@@ -150,6 +150,7 @@ public class SpriteFramePreviewController extends Controller {
 				for (SpriteFrameEditor editor : c.getAddedSubList()) {
 					frame.currentEditor.addListener(editor.changeListener);
 				}
+				canvas.redraw();
 			}
 		});
 

@@ -18,12 +18,15 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import lombok.experimental.var;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.ShapeManager;
+import pl.shockah.mallard.ui.controller.sprite.editor.ShapeEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 import pl.shockah.unicorn.color.HSLuvColorSpace;
 import pl.shockah.unicorn.color.RGBColorSpace;
+import pl.shockah.unicorn.func.Func2;
 import pl.shockah.unicorn.rand.Randomizer;
 
 public class SpriteProject extends Project {
@@ -127,6 +130,9 @@ public class SpriteProject extends Project {
 			public final ShapeManager.Entry<S> shapeManagerEntry;
 
 			@Nonnull
+			public final ShapeEditor<S> editor;
+
+			@Nonnull
 			public final String name;
 
 			@Nonnull
@@ -138,11 +144,16 @@ public class SpriteProject extends Project {
 			@Nonnull
 			public final BooleanProperty visible = new SimpleBooleanProperty(this, "visible");
 
-			public ShapeEntry(@Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
+			@SuppressWarnings("unchecked")
+			public ShapeEntry(@Nonnull Frame frame, @Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
 				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
 				this.shape.setValue(shape);
 				visible.setValue(true);
+
+				Func2<?, ?, ?> wildcardFactory = shapeManagerEntry.editorFactory;
+				var rawFactory = (Func2<SpriteProject.Frame, SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>, ShapeEditor<Shape.Filled>>) wildcardFactory;
+				editor = (ShapeEditor<S>)rawFactory.call(frame, this);
 
 				Randomizer randomizer = new Randomizer(new Random(name.hashCode() * name.hashCode()));
 				HSLuvColorSpace hsl = new HSLuvColorSpace(

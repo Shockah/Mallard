@@ -121,7 +121,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 						String type = jSubspriteShape.getString("type");
 						String name = jSubspriteShapeEntry.getKey();
 
-						SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry = new SpriteProject.Frame.ShapeEntry<>(shapeManager.getEntry(type), name, shapeManager.jsonSerializationManager.deserialize(jSubspriteShape));
+						SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry = new SpriteProject.Frame.ShapeEntry<>(frame, shapeManager.getEntry(type), name, shapeManager.jsonSerializationManager.deserialize(jSubspriteShape));
 						shapeEntry.visible.set(jSubspriteShape.getBool("visible", true));
 						jSubspriteShape.onObject("color", jColor -> {
 							Color color = new Color(jColor.getFloat("r"), jColor.getFloat("g"), jColor.getFloat("b"), 1.0);

@@ -16,6 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -77,7 +78,7 @@ public class SpriteFrameShapesController extends Controller {
 																};
 
 																previewController.editors.addListener(temporaryListener);
-																frame.shapes.add(new SpriteProject.Frame.ShapeEntry<>(rawEntry, result, null));
+																frame.shapes.add(new SpriteProject.Frame.ShapeEntry<>(frame, rawEntry, result, null));
 																previewController.editors.removeListener(temporaryListener);
 															});
 														});
@@ -142,6 +143,15 @@ public class SpriteFrameShapesController extends Controller {
 						visibleCheckbox
 				);
 			}});
+
+			setOnMouseClicked(event -> {
+				SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> item = getItem();
+				if (item == null)
+					return;
+
+				if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+					item.editor.setActive();
+			});
 		}
 
 		@Override

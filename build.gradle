@@ -2,7 +2,7 @@ allprojects {
 	version = "1.0"
 	ext {
 		gdxVersion = "1.9.8"
-		unicornVersion = "2.3"
+		unicornVersion = "2.6.1"
 		godwitVersion = "022805c7bc723c9d70ad941b8f5fb56fd44a028e"
 	}
 

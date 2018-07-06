@@ -2,6 +2,7 @@ package pl.shockah.mallard.project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +20,9 @@ import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.ShapeManager;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
+import pl.shockah.unicorn.color.HSLuvColorSpace;
+import pl.shockah.unicorn.color.RGBColorSpace;
+import pl.shockah.unicorn.rand.Randomizer;
 
 public class SpriteProject extends Project {
 	@Nonnull
@@ -133,7 +137,16 @@ public class SpriteProject extends Project {
 				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
 				this.shape.setValue(shape);
-				color.setValue(Color.RED);
+
+				Randomizer randomizer = new Randomizer(new Random(name.hashCode() * name.hashCode()));
+				HSLuvColorSpace hsl = new HSLuvColorSpace(
+						randomizer.getFloatRangeGenerator(0f, 1f).generate(),
+						randomizer.getFloatRangeGenerator(0.6f, 1f).generate(),
+						randomizer.getFloatRangeGenerator(0.3f, 0.7f).generate()
+				);
+				RGBColorSpace rgb = hsl.toRGB();
+
+				color.setValue(new Color(rgb.r, rgb.g, rgb.b, 1.0));
 			}
 		}
 	}

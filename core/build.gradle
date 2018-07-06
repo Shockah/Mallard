@@ -5,6 +5,7 @@ dependencies {
 	compile "com.google.code.findbugs:jsr305:3.0.2"
 	compile "com.github.Shockah.Godwit:core:$godwitVersion"
 	compile "com.github.Shockah.Unicorn:collection:$unicornVersion"
+	compile "com.github.Shockah.Unicorn:colorspace:$unicornVersion"
 }
 
 targetCompatibility = '1.8'

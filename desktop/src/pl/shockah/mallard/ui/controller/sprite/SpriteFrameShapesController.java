@@ -125,11 +125,11 @@ public class SpriteFrameShapesController extends Controller {
 			super();
 
 			label = new Label();
-			colorPicker = new ColorPicker();
+			colorPicker = new ColorPicker() {{
+				getStyleClass().add("button");
+				setStyle("-fx-color-label-visible: false;");
+			}};
 			visibleCheckbox = new CheckBox();
-
-			colorPicker.getStyleClass().add("button");
-			colorPicker.setStyle("-fx-color-label-visible: false;");
 
 			setGraphic(new HBox(4) {{
 				setAlignment(Pos.CENTER);

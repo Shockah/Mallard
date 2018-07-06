@@ -97,6 +97,7 @@ public abstract class ShapeSerializer<S extends Shape.Filled> extends JSONSerial
 		@Override
 		public Polygon deserialize(@Nonnull JSONObject json) {
 			Polygon polygon = new Polygon();
+			polygon.closed = true;
 
 			JSONList<JSONObject> jPoints = json.getList("points").ofObjects();
 			for (JSONObject jPoint : jPoints) {

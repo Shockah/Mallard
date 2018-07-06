@@ -24,7 +24,7 @@ public class ShapeManager {
 
 	public <S extends Shape.Filled, Serializer extends JSONSerializer<S>> void register(@Nonnull String name, @Nonnull Class<S> clazz, @Nonnull Serializer serializer, @Nonnull Func2<SpriteProject.Frame, SpriteProject.Frame.ShapeEntry<S>, ShapeEditor<S>> editorFactory) {
 		Entry<S> entry = new Entry<>(name, clazz, editorFactory);
-		typeToEntryMap.put(name, entry);
+		typeToEntryMap.put(serializer.type, entry);
 		types.add(entry);
 		jsonSerializationManager.register(clazz, serializer);
 	}

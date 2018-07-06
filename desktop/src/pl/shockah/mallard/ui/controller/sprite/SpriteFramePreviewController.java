@@ -141,6 +141,8 @@ public class SpriteFramePreviewController extends Controller {
 			}
 		};
 
+		frame.shapes.forEach(this::onNewShape);
+
 		shapesListListener = c -> {
 			while (c.next()) {
 				for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : c.getRemoved()) {
@@ -148,6 +150,7 @@ public class SpriteFramePreviewController extends Controller {
 				}
 				for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : c.getAddedSubList()) {
 					editors.add(createEditor(shapeEntry));
+					onNewShape(shapeEntry);
 				}
 			}
 		};
@@ -165,6 +168,15 @@ public class SpriteFramePreviewController extends Controller {
 		});
 
 		editors.add(originEditor = new OriginEditor(frame));
+	}
+
+	private void onNewShape(@Nonnull SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry) {
+		shapeEntry.visible.addListener((observable, oldValue, newValue) -> {
+			canvas.redraw();
+		});
+		shapeEntry.color.addListener((observable, oldValue, newValue) -> {
+			canvas.redraw();
+		});
 	}
 
 	@Override

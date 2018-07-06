@@ -95,6 +95,9 @@ public class RectangleEditor extends ShapeEditor<Rectangle> {
 				context.strokeLine(x0 + points[1].x * scale + 5, y0 + points[1].y * scale - 5, x0 + points[1].x * scale - 5, y0 + points[1].y * scale + 5);
 			}
 		} else {
+			if (!entry.visible.get())
+				return;
+
 			Rectangle shape = entry.shape.getValue();
 			if (shape != null) {
 				context.fillRect(x0 + shape.position.x * scale, y0 + shape.position.y * scale, shape.size.x * scale, shape.size.y * scale);

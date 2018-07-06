@@ -81,6 +81,9 @@ public class CircleEditor extends ShapeEditor<Circle> {
 				context.strokeLine(x0 + point.x * scale, y0 + point.y * scale - 8, x0 + point.x * scale, y0 + point.y * scale + 8);
 			}
 		} else {
+			if (!entry.visible.get())
+				return;
+
 			Circle shape = entry.shape.getValue();
 			if (shape != null) {
 				context.fillOval(x0 + (shape.position.x - shape.radius) * scale, y0 + (shape.position.y - shape.radius) * scale, shape.radius * 2 * scale, shape.radius * 2 * scale);

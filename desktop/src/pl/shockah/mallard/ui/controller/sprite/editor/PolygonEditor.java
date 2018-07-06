@@ -73,6 +73,9 @@ public class PolygonEditor extends ShapeEditor<Polygon> {
 			context.strokeLine(x0 + newPoint.x * scale - 8, y0 + newPoint.y * scale, x0 + newPoint.x * scale + 8, y0 + newPoint.y * scale);
 			context.strokeLine(x0 + newPoint.x * scale, y0 + newPoint.y * scale - 8, x0 + newPoint.x * scale, y0 + newPoint.y * scale + 8);
 		} else {
+			if (!entry.visible.get())
+				return;
+
 			Polygon shape = entry.shape.getValue();
 			if (shape != null) {
 				double[] xs = new double[shape.getPointCount()];

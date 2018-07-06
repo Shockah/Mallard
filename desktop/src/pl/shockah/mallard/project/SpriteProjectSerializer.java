@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.jay.JSONList;
@@ -54,7 +55,15 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 				if (!frame.shapes.isEmpty()) {
 					JSONObject jSubspriteShapes = jSubsprite.putNewObject("shapes");
 					for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.shapes) {
-						jSubspriteShapes.put(shapeEntry.name, shapeManager.jsonSerializationManager.serialize(shapeEntry.shape.getValue()));
+						JSONObject jShapeEntry = shapeManager.jsonSerializationManager.serialize(shapeEntry.shape.getValue());
+						if (!shapeEntry.visible.get())
+							jShapeEntry.put("visible", false);
+						jShapeEntry.put("color", JSONObject.of(
+								"r", shapeEntry.color.getValue().getRed(),
+								"g", shapeEntry.color.getValue().getGreen(),
+								"b", shapeEntry.color.getValue().getBlue()
+						));
+						jSubspriteShapes.put(shapeEntry.name, jShapeEntry);
 					}
 				}
 			}
@@ -111,7 +120,14 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 						JSONObject jSubspriteShape = (JSONObject) jSubspriteShapeEntry.getValue();
 						String type = jSubspriteShape.getString("type");
 						String name = jSubspriteShapeEntry.getKey();
-						frame.shapes.add(new SpriteProject.Frame.ShapeEntry<>(shapeManager.getEntry(type), name, shapeManager.jsonSerializationManager.deserialize(jSubspriteShape)));
+
+						SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry = new SpriteProject.Frame.ShapeEntry<>(shapeManager.getEntry(type), name, shapeManager.jsonSerializationManager.deserialize(jSubspriteShape));
+						shapeEntry.visible.set(jSubspriteShape.getBool("visible", true));
+						jSubspriteShape.onObject("color", jColor -> {
+							Color color = new Color(jColor.getFloat("r"), jColor.getFloat("g"), jColor.getFloat("b"), 1.0);
+							shapeEntry.color.setValue(color);
+						});
+						frame.shapes.add(shapeEntry);
 					}
 				}
 

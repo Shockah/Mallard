@@ -7,7 +7,9 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -128,15 +130,19 @@ public class SpriteProject extends Project {
 			public final String name;
 
 			@Nonnull
-			public final Property<S> shape = new SimpleObjectProperty<>();
+			public final Property<S> shape = new SimpleObjectProperty<>(this, "shape");
 
 			@Nonnull
-			public final Property<Color> color = new SimpleObjectProperty<>();
+			public final Property<Color> color = new SimpleObjectProperty<>(this, "color");
+
+			@Nonnull
+			public final BooleanProperty visible = new SimpleBooleanProperty(this, "visible");
 
 			public ShapeEntry(@Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
 				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
 				this.shape.setValue(shape);
+				visible.setValue(true);
 
 				Randomizer randomizer = new Randomizer(new Random(name.hashCode() * name.hashCode()));
 				HSLuvColorSpace hsl = new HSLuvColorSpace(

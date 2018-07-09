@@ -1,15 +1,15 @@
 package pl.shockah.mallard.project;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,7 +41,7 @@ public class SpriteProject extends Project {
 		public final Property<Image> image = new SimpleObjectProperty<>(this, "image");
 
 		@Nonnull
-		public final Property<Vec2> origin = new SimpleObjectProperty<>(this, "origin");
+		public final Property<Vec2> origin = new SimpleObjectProperty<>(this, "origin", Vec2.zero);
 
 		@Nonnull
 		public final ObservableList<ShapeEntry<? extends Shape.Filled>> shapes = FXCollections.observableArrayList();
@@ -51,7 +51,6 @@ public class SpriteProject extends Project {
 
 		public Frame(@Nonnull Image image) {
 			this.image.setValue(image);
-			origin.setValue(Vec2.zero);
 		}
 
 		public void trimImage() {
@@ -142,14 +141,13 @@ public class SpriteProject extends Project {
 			public final Property<Color> color = new SimpleObjectProperty<>(this, "color");
 
 			@Nonnull
-			public final BooleanProperty visible = new SimpleBooleanProperty(this, "visible");
+			public final BooleanProperty visible = new SimpleBooleanProperty(this, "visible", true);
 
 			@SuppressWarnings("unchecked")
 			public ShapeEntry(@Nonnull Frame frame, @Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
 				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
 				this.shape.setValue(shape);
-				visible.setValue(true);
 
 				Func2<?, ?, ?> wildcardFactory = shapeManagerEntry.editorFactory;
 				var rawFactory = (Func2<SpriteProject.Frame, SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>, ShapeEditor<Shape.Filled>>) wildcardFactory;
@@ -170,15 +168,17 @@ public class SpriteProject extends Project {
 
 	public static class Animation {
 		@Nonnull
-		public final List<Frame> frames = new ArrayList<>();
+		public final ObservableList<Frame> frames = FXCollections.observableArrayList();
 
-		public float duration = 1f;
+		@Nonnull
+		public final DoubleProperty duration = new SimpleDoubleProperty(this, "duration", 1.0);
 
 		public static class Frame {
 			@Nonnull
 			public final SpriteProject.Frame frame;
 
-			public float relativeDuration = 1f;
+			@Nonnull
+			public final DoubleProperty relativeDuration = new SimpleDoubleProperty(this, "relativeDuration", 1.0);
 
 			public Frame(@Nonnull SpriteProject.Frame frame) {
 				this.frame = frame;

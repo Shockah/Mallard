@@ -28,7 +28,7 @@ public class SpriteController extends Controller {
 		this.project = project;
 
 		framesController = new SpriteFramesController(this, project);
-		animationsController = new SpriteAnimationsController(this, project);
+		animationsController = new SpriteAnimationsController(this, framesController, project);
 
 		setView(borderPane = new BorderPane() {{
 			setLeft(new VBox(8) {{

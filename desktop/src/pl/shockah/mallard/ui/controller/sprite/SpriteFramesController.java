@@ -31,12 +31,58 @@ public class SpriteFramesController extends Controller {
 	@Nonnull
 	public final SpriteProject project;
 
+	@Nonnull
+	public final ListView<SpriteProject.Frame> frameList;
+
 	public SpriteFramesController(@Nonnull SpriteController spriteController, @Nonnull SpriteProject project) {
 		this.spriteController = spriteController;
 		this.project = project;
 
 		Box<ListView<SpriteProject.Frame>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
+
+		frameList = new ListView<SpriteProject.Frame>() {{
+			ListView<SpriteProject.Frame> self = this;
+			listView.value = this;
+			setMaxHeight(Double.MAX_VALUE);
+			setCellFactory(self2 -> new Cell());
+			setItems(project.frames);
+			setOnDragOver(event -> {
+				if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles())) {
+					event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
+					event.consume();
+				}
+			});
+			setOnDragDropped(event -> {
+				if (event.getDragboard().hasImage()) {
+					project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
+					event.setDropCompleted(true);
+				} else if (event.getDragboard().hasFiles()) {
+					for (File file : event.getDragboard().getFiles()) {
+						Image image = new Image(file.toURI().toString());
+						project.frames.add(new SpriteProject.Frame(image));
+					}
+					event.setDropCompleted(true);
+					event.consume();
+				}
+			});
+			setOnMouseClicked(event -> {
+				if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
+					return;
+
+				SpriteProject.Frame selected = getSelectionModel().getSelectedItem();
+				if (selected == null)
+					return;
+
+				SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
+				spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getView());
+				spriteController.setCenterPanel(previewController.getView());
+			});
+
+			getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+				removeButton.value.setDisable(newValue == null);
+			});
+		}};
 
 		setView(new VBox(4) {{
 			setMaxHeight(Double.MAX_VALUE);
@@ -67,53 +113,12 @@ public class SpriteFramesController extends Controller {
 									HBox.setHgrow(this, Priority.ALWAYS);
 									setDisable(true);
 									setOnAction(event -> {
-										project.frames.remove(listView.value.getSelectionModel().selectedItemProperty().get());
+										project.frames.remove(listView.value.getSelectionModel().getSelectedItem());
 									});
 								}}
 						);
 					}},
-					new ListView<SpriteProject.Frame>() {{
-						ListView<SpriteProject.Frame> self = this;
-						listView.value = this;
-						setMaxHeight(Double.MAX_VALUE);
-						setCellFactory(self2 -> new Cell());
-						setItems(project.frames);
-						setOnDragOver(event -> {
-							if (event.getGestureSource() != self && (event.getDragboard().hasImage() || event.getDragboard().hasFiles())) {
-								event.acceptTransferModes(TransferMode.COPY, TransferMode.LINK);
-								event.consume();
-							}
-						});
-						setOnDragDropped(event -> {
-							if (event.getDragboard().hasImage()) {
-								project.frames.add(new SpriteProject.Frame(event.getDragboard().getImage()));
-								event.setDropCompleted(true);
-							} else if (event.getDragboard().hasFiles()) {
-								for (File file : event.getDragboard().getFiles()) {
-									Image image = new Image(file.toURI().toString());
-									project.frames.add(new SpriteProject.Frame(image));
-								}
-								event.setDropCompleted(true);
-								event.consume();
-							}
-						});
-						setOnMouseClicked(event -> {
-							if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
-								return;
-
-							SpriteProject.Frame selected = getSelectionModel().getSelectedItem();
-							if (selected == null)
-								return;
-
-							SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
-							spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getView());
-							spriteController.setCenterPanel(previewController.getView());
-						});
-
-						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-							removeButton.value.setDisable(newValue == null);
-						});
-					}}
+					frameList
 			);
 		}});
 	}

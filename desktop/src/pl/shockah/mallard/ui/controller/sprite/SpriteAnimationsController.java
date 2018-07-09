@@ -74,9 +74,9 @@ public class SpriteAnimationsController extends Controller {
 							if (selected == null)
 								return;
 
-							//SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
-							spriteController.setRightPanel(new SpriteAnimationPropertiesController(spriteController, framesController, project, selected).getView());
-							//spriteController.setCenterPanel(previewController.getView());
+							SpriteAnimationPreviewController previewController = new SpriteAnimationPreviewController(spriteController, project, selected);
+							spriteController.setRightPanel(new SpriteAnimationPropertiesController(spriteController, previewController, framesController, project, selected).getView());
+							spriteController.setCenterPanel(previewController.getView());
 						});
 
 						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

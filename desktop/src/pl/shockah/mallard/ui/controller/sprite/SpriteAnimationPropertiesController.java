@@ -20,8 +20,8 @@ public class SpriteAnimationPropertiesController extends Controller {
 	@Nonnull
 	public final SpriteFramesController framesController;
 
-//	@Nonnull
-//	public final SpriteFramePreviewController previewController;
+	@Nonnull
+	public final SpriteAnimationPreviewController previewController;
 
 	@Nonnull
 	public final SpriteProject project;
@@ -31,8 +31,9 @@ public class SpriteAnimationPropertiesController extends Controller {
 
 	private ListChangeListener<SpriteProject.Animation.Entry> listChangeListener;
 
-	public SpriteAnimationPropertiesController(@Nonnull SpriteController spriteController, @Nonnull SpriteFramesController framesController, @Nonnull SpriteProject project, @Nonnull SpriteProject.Animation.Entry animationEntry) {
+	public SpriteAnimationPropertiesController(@Nonnull SpriteController spriteController, @Nonnull SpriteAnimationPreviewController previewController, @Nonnull SpriteFramesController framesController, @Nonnull SpriteProject project, @Nonnull SpriteProject.Animation.Entry animationEntry) {
 		this.spriteController = spriteController;
+		this.previewController = previewController;
 		this.framesController = framesController;
 		this.project = project;
 		this.animationEntry = animationEntry;
@@ -48,8 +49,9 @@ public class SpriteAnimationPropertiesController extends Controller {
 						setPrefWidth(250);
 
 						add(new Label("Duration:"), 0, 0);
-						add(new Spinner<Double>(0.0, Double.MAX_VALUE, 1.0, 0.05) {{
-							getValueFactory().valueProperty().bindBidirectional(animationEntry.animation.duration.asObject());
+						add(new Spinner<Double>(0.0, Double.MAX_VALUE, animationEntry.animation.duration.get(), 0.05) {{
+							setEditable(true);
+							animationEntry.animation.duration.bind(valueProperty());
 						}}, 1, 0);
 					}}) {{
 						setCollapsible(false);

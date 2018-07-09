@@ -130,14 +130,14 @@ public class SpriteAnimationFramesController extends Controller {
 			super.updateItem(item, empty);
 
 			imageView.imageProperty().unbind();
-			relativeDurationSpinner.getValueFactory().valueProperty().unbind();
 
 			if (empty || item == null) {
 				getGraphic().setVisible(false);
 			} else {
 				getGraphic().setVisible(true);
 				imageView.imageProperty().bind(item.frame.image);
-				relativeDurationSpinner.getValueFactory().valueProperty().bindBidirectional(item.relativeDuration.asObject());
+				item.relativeDuration.unbind();
+				item.relativeDuration.bind(relativeDurationSpinner.valueProperty());
 			}
 		}
 	}

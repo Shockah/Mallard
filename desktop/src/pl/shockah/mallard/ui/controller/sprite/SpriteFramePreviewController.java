@@ -10,35 +10,23 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.BindUtilities;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.controller.sprite.editor.OriginEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
-import pl.shockah.mallard.ui.view.ResizableCanvas;
 import pl.shockah.unicorn.Math2;
 import pl.shockah.unicorn.func.Action2;
 
-public class SpriteFramePreviewController extends Controller {
+public class SpriteFramePreviewController extends AbstractSpritePreviewController {
 	@Nonnull
 	public final SpriteController spriteController;
 
 	@Nonnull
 	public final SpriteProject project;
-
-	@Nonnull
-	public final SpriteProject.Frame frame;
-
-	@Nonnull
-	public final ResizableCanvas canvas;
 
 	protected boolean additionalEditingPrecision = false;
 
@@ -57,24 +45,7 @@ public class SpriteFramePreviewController extends Controller {
 	public SpriteFramePreviewController(@Nonnull SpriteController spriteController, @Nonnull SpriteProject project, @Nonnull SpriteProject.Frame frame) {
 		this.spriteController = spriteController;
 		this.project = project;
-		this.frame = frame;
-
-		canvas = new ResizableCanvas() {
-			{
-				parentProperty().addListener((observable, oldValue, newValue) -> {
-					if (newValue != null) {
-						BindUtilities.bind(((Region)newValue).widthProperty(), width -> setWidth(width.doubleValue()));
-						BindUtilities.bind(((Region)newValue).heightProperty(), height -> setHeight(height.doubleValue()));
-					}
-				});
-			}
-
-			@Override
-			protected void draw(@Nonnull GraphicsContext context) {
-				super.draw(context);
-				SpriteFramePreviewController.this.draw(context);
-			}
-		};
+		this.frame.setValue(frame);
 
 		setView(new TitledPane("Frame Preview", new VBox() {{
 			getChildren().add(canvas);
@@ -173,19 +144,19 @@ public class SpriteFramePreviewController extends Controller {
 	@Override
 	protected void onAddedToScene(@Nonnull Scene scene) {
 		super.onAddedToScene(scene);
-		frame.currentEditor.addListener(currentEditorListener);
+		frame.getValue().currentEditor.addListener(currentEditorListener);
 
-		for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.shapes) {
+		for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.getValue().shapes) {
 			editors.add(shapeEntry.editor);
 		}
-		frame.shapes.addListener(shapesListListener);
+		frame.getValue().shapes.addListener(shapesListListener);
 	}
 
 	@Override
 	protected void onRemovedFromScene(@Nonnull Scene scene) {
 		super.onRemovedFromScene(scene);
-		frame.currentEditor.removeListener(currentEditorListener);
-		frame.shapes.removeListener(shapesListListener);
+		frame.getValue().currentEditor.removeListener(currentEditorListener);
+		frame.getValue().shapes.removeListener(shapesListListener);
 	}
 
 	private void calculateMousePositionAndProceed(double eventX, double eventY, @Nonnull Action2<Double, Double> func) {
@@ -204,8 +175,8 @@ public class SpriteFramePreviewController extends Controller {
 		double fx = (mx - x1) / (x2 - x1);
 		double fy = (my - y1) / (y2 - y1);
 
-		double newX = fx * frame.image.getValue().getWidth();
-		double newY = fy * frame.image.getValue().getHeight();
+		double newX = fx * frame.getValue().image.getValue().getWidth();
+		double newY = fy * frame.getValue().image.getValue().getHeight();
 
 		if (additionalEditingPrecision) {
 			newX *= 4;
@@ -223,109 +194,12 @@ public class SpriteFramePreviewController extends Controller {
 		func.call(newX, newY);
 	}
 
-	public double getImageScale() {
-		double padding = 16;
-
-		double scale = (canvas.getWidth() - padding) / frame.image.getValue().getWidth();
-		if (frame.image.getValue().getHeight() * scale > (canvas.getHeight() - padding))
-			scale = (canvas.getHeight() - padding) / frame.image.getValue().getHeight();
-		return scale;
-	}
-
-	public double getLeft() {
-		double scale = getImageScale();
-		double width = frame.image.getValue().getWidth() * scale;
-		return canvas.getWidth() * 0.5 - width * 0.5;
-	}
-
-	public double getRight() {
-		double scale = getImageScale();
-		double width = frame.image.getValue().getWidth() * scale;
-		return canvas.getWidth() * 0.5 + width * 0.5;
-	}
-
-	public double getTop() {
-		double scale = getImageScale();
-		double height = frame.image.getValue().getHeight() * scale;
-		return canvas.getHeight() * 0.5 - height * 0.5;
-	}
-
-	public double getBottom() {
-		double scale = getImageScale();
-		double height = frame.image.getValue().getHeight() * scale;
-		return canvas.getHeight() * 0.5 + height * 0.5;
-	}
-
-	private void draw(@Nonnull GraphicsContext context) {
-		context.clearRect(0, 0, context.getCanvas().getWidth(), context.getCanvas().getHeight());
-		drawGrid(context);
-		drawImage(context);
+	@Override
+	protected void draw(@Nonnull GraphicsContext context) {
+		super.draw(context);
 
 		for (SpriteFrameEditor editor : editors) {
 			editor.draw(this, context);
-		}
-	}
-
-	private void drawGrid(@Nonnull GraphicsContext context) {
-		double scale = getImageScale();
-		double width = frame.image.getValue().getWidth() * scale;
-		double height = frame.image.getValue().getHeight() * scale;
-		double x1 = canvas.getWidth() * 0.5 - width * 0.5;
-		double y1 = canvas.getHeight() * 0.5 - height * 0.5;
-
-		context.setFill(Color.WHITE);
-		context.fillRect(x1, y1, width, height);
-
-		context.setFill(Color.gray(0.925));
-		for (int y = 0; y < frame.image.getValue().getHeight() * 2; y++) {
-			for (int x = 0; x < frame.image.getValue().getWidth() * 2; x++) {
-				if ((x + y) % 2 == 0)
-					continue;
-
-				double px1 = x1 + x * scale * 0.5;
-				double py1 = y1 + y * scale * 0.5;
-				double px2 = px1 + scale * 0.5;
-				double py2 = py1 + scale * 0.5;
-
-				px1 = Math.round(px1);
-				py1 = Math.round(py1);
-				px2 = Math.round(px2);
-				py2 = Math.round(py2);
-
-				if (px2 - px1 < 1 || py2 - py1 < 1)
-					continue;
-				context.fillRect(px1, py1, px2 - px1, py2 - py1);
-			}
-		}
-	}
-
-	private void drawImage(@Nonnull GraphicsContext context) {
-		double scale = getImageScale();
-		double width = frame.image.getValue().getWidth() * scale;
-		double height = frame.image.getValue().getHeight() * scale;
-		double x1 = canvas.getWidth() * 0.5 - width * 0.5;
-		double y1 = canvas.getHeight() * 0.5 - height * 0.5;
-
-		PixelReader pixels = frame.image.getValue().getPixelReader();
-		for (int y = 0; y < frame.image.getValue().getHeight(); y++) {
-			for (int x = 0; x < frame.image.getValue().getWidth(); x++) {
-				Color color = pixels.getColor(x, y);
-				context.setFill(color);
-
-				double px1 = x1 + x * scale;
-				double py1 = y1 + y * scale;
-				double px2 = px1 + scale;
-				double py2 = py1 + scale;
-
-				px1 = Math.round(px1);
-				py1 = Math.round(py1);
-				px2 = Math.round(px2);
-				py2 = Math.round(py2);
-
-				if (px2 - px1 < 1 || py2 - py1 < 1)
-					continue;
-				context.fillRect(px1, py1, px2 - px1, py2 - py1);
-			}
 		}
 	}
 }

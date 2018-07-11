@@ -3,9 +3,12 @@ package pl.shockah.mallard.ui.controller.sprite;
 import javax.annotation.Nonnull;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
@@ -15,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.ListViewUtilities;
 import pl.shockah.mallard.ui.controller.Controller;
@@ -102,13 +106,32 @@ public class SpriteAnimationFramesController extends Controller {
 		@Nonnull
 		public final Spinner<Double> relativeDurationSpinner;
 
+		@Nonnull
+		public final Spinner<Double> offsetXSpinner;
+
+		@Nonnull
+		public final Spinner<Double> offsetYSpinner;
+
 		public Cell() {
 			super();
 
 			imageView = new ImageView();
 
+			// HACK, doesn't seem to work otherwise
+			DoubleProperty widthMax = new SimpleDoubleProperty(this, "width_max_hack", Double.MAX_VALUE);
+			DoubleProperty width60 = new SimpleDoubleProperty(this, "width_60_hack", 60);
+
 			relativeDurationSpinner = new Spinner<>(0.0, Double.MAX_VALUE, 1.0, 0.05);
 			relativeDurationSpinner.setEditable(true);
+			relativeDurationSpinner.maxWidthProperty().bind(widthMax);
+
+			offsetXSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, 0.0, 0.5);
+			offsetXSpinner.setEditable(true);
+			offsetXSpinner.prefWidthProperty().bind(width60);
+
+			offsetYSpinner = new Spinner<>(-Double.MAX_VALUE, Double.MAX_VALUE, 0.0, 0.5);
+			offsetYSpinner.setEditable(true);
+			offsetYSpinner.prefWidthProperty().bind(width60);
 
 			setGraphic(new HBox(4) {{
 				setAlignment(Pos.CENTER);
@@ -118,7 +141,23 @@ public class SpriteAnimationFramesController extends Controller {
 						new Pane() {{
 							HBox.setHgrow(this, Priority.ALWAYS);
 						}},
-						relativeDurationSpinner
+						new VBox(4) {{
+							setAlignment(Pos.CENTER);
+
+							getChildren().addAll(
+									relativeDurationSpinner,
+									new HBox(4) {{
+										setAlignment(Pos.CENTER);
+
+										getChildren().addAll(
+												new Label("X:"),
+												offsetXSpinner,
+												new Label("Y:"),
+												offsetYSpinner
+										);
+									}}
+							);
+						}}
 				);
 			}});
 
@@ -135,9 +174,16 @@ public class SpriteAnimationFramesController extends Controller {
 				getGraphic().setVisible(false);
 			} else {
 				getGraphic().setVisible(true);
+
 				imageView.imageProperty().bind(item.frame.image);
+
 				item.relativeDuration.unbind();
 				item.relativeDuration.bind(relativeDurationSpinner.valueProperty());
+
+				item.offset.unbind();
+				item.offset.bind(Bindings.createObjectBinding(() -> {
+					return new Vec2(offsetXSpinner.getValue().floatValue(), offsetYSpinner.getValue().floatValue());
+				}, offsetXSpinner.valueProperty(), offsetYSpinner.valueProperty()));
 			}
 		}
 	}

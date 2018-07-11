@@ -180,6 +180,9 @@ public class SpriteProject extends Project {
 			@Nonnull
 			public final DoubleProperty relativeDuration = new SimpleDoubleProperty(this, "relativeDuration", 1.0);
 
+			@Nonnull
+			public final Property<Vec2> offset = new SimpleObjectProperty<>(this, "offset", Vec2.zero);
+
 			public Frame(@Nonnull SpriteProject.Frame frame) {
 				this.frame = frame;
 			}

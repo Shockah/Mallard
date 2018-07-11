@@ -25,7 +25,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import pl.shockah.godwit.geom.MutableVec2;
 import pl.shockah.godwit.geom.Rectangle;
+import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
 
 public class SpriteAnimationPreviewController extends AbstractSpritePreviewController {
@@ -148,8 +150,13 @@ public class SpriteAnimationPreviewController extends AbstractSpritePreviewContr
 		Timeline timeline = new Timeline();
 		double seconds = 0.0;
 
+		MutableVec2 currentOffset = new MutableVec2();
 		for (SpriteProject.Animation.Frame frame : animationEntry.animation.frames) {
+			currentOffset.x += frame.offset.getValue().x;
+			currentOffset.y += frame.offset.getValue().y;
+			Vec2 immutableCurrentOffset = currentOffset.asImmutable();
 			timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(seconds), event -> {
+				SpriteAnimationPreviewController.this.frameOffset.setValue(immutableCurrentOffset);
 				SpriteAnimationPreviewController.this.frame.setValue(frame.frame);
 			}));
 			seconds += (frame.relativeDuration.get() / totalWeight * animationEntry.animation.duration.get()) / animationSpeed.get();
@@ -171,10 +178,14 @@ public class SpriteAnimationPreviewController extends AbstractSpritePreviewContr
 		double y1 = Integer.MIN_VALUE;
 		double y2 = Integer.MIN_VALUE;
 
+		MutableVec2 currentOffset = new MutableVec2();
 		for (SpriteProject.Animation.Frame frame : animationEntry.animation.frames) {
 			Image image = frame.frame.image.getValue();
-			double nx1 = -frame.frame.origin.getValue().x;
-			double ny1 = -frame.frame.origin.getValue().y;
+			currentOffset.x += frame.offset.getValue().x;
+			currentOffset.y += frame.offset.getValue().y;
+
+			double nx1 = -frame.frame.origin.getValue().x + currentOffset.x;
+			double ny1 = -frame.frame.origin.getValue().y + currentOffset.y;
 			double nx2 = nx1 + image.getWidth();
 			double ny2 = ny1 + image.getHeight();
 

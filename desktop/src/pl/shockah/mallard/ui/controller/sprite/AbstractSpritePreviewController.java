@@ -9,6 +9,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import pl.shockah.godwit.geom.Rectangle;
+import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
 import pl.shockah.mallard.ui.controller.Controller;
@@ -23,6 +24,9 @@ public abstract class AbstractSpritePreviewController extends Controller {
 
 	@Nonnull
 	public final Property<SpriteProject.Frame> frame = new SimpleObjectProperty<>(this, "frame");
+
+	@Nonnull
+	public final Property<Vec2> frameOffset = new SimpleObjectProperty<>(this, "frameOffset", Vec2.zero);
 
 	public AbstractSpritePreviewController() {
 		canvas = new ResizableCanvas() {
@@ -152,8 +156,8 @@ public abstract class AbstractSpritePreviewController extends Controller {
 		double x1 = getLeft();
 		double y1 = getTop();
 
-		double offsetX = getOriginX() + getImageX();
-		double offsetY = getOriginY() + getImageY();
+		double offsetX = getOriginX() + getImageX() - frameOffset.getValue().x;
+		double offsetY = getOriginY() + getImageY() - frameOffset.getValue().y;
 		int imageWidth = (int)frame.getValue().image.getValue().getWidth();
 		int imageHeight = (int)frame.getValue().image.getValue().getHeight();
 

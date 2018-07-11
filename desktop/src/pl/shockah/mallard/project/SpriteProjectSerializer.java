@@ -78,8 +78,16 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 					for (SpriteProject.Animation.Frame frame : animation.frames) {
 						JSONObject jAnimationFrame = jAnimationFrames.addNewObject();
 						jAnimationFrame.put("index", project.frames.indexOf(frame.frame));
+
 						if (frame.relativeDuration.get() != 1f)
 							jAnimationFrame.put("relativeDuration", frame.relativeDuration.get());
+
+						if (!frame.offset.getValue().equals(Vec2.zero)) {
+							jAnimationFrame.put("offset", JSONObject.of(
+									"x", frame.offset.getValue().x,
+									"y", frame.offset.getValue().y
+							));
+						}
 					}
 
 					jAnimation.put("duration", animation.duration.get());
@@ -143,8 +151,13 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 						SpriteProject.Frame frame = project.frames.get(jAnimationFrame.getInt("index"));
 						SpriteProject.Animation.Frame animationFrame = new SpriteProject.Animation.Frame(frame);
 
-						if (jAnimationFrame.containsKey("relativeDuration"))
-							animationFrame.relativeDuration.set(jAnimationFrame.getFloat("relativeDuration"));
+						jAnimationFrame.onFloat("relativeDuration", animationFrame.relativeDuration::set);
+						jAnimationFrame.onObject("offset", jFrameOffset -> {
+							animationFrame.offset.setValue(new Vec2(
+									jFrameOffset.getFloat("x"),
+									jFrameOffset.getFloat("y")
+							));
+						});
 
 						animation.frames.add(animationFrame);
 					}

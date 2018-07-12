@@ -1,9 +1,17 @@
 package pl.shockah.mallard.project;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -13,17 +21,28 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import lombok.experimental.var;
+import pl.shockah.godwit.geom.Rectangle;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONPrettyPrinter;
+import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.ShapeManager;
 import pl.shockah.mallard.ui.controller.sprite.editor.ShapeEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
+import pl.shockah.unicorn.UnexpectedException;
 import pl.shockah.unicorn.color.HSLuvColorSpace;
 import pl.shockah.unicorn.color.RGBColorSpace;
 import pl.shockah.unicorn.func.Func2;
@@ -35,6 +54,61 @@ public class SpriteProject extends Project {
 
 	@Nonnull
 	public final ObservableList<Animation.Entry> animations = FXCollections.observableArrayList();
+
+	@Override
+	public void setupMenuBar(@Nonnull MenuBar menuBar, @Nonnull Menu fileMenu) {
+		super.setupMenuBar(menuBar, fileMenu);
+		fileMenu.getItems().addAll(
+				new SeparatorMenuItem(),
+				new MenuItem("Export As...") {{
+					setOnAction(event -> exportAction());
+				}}
+		);
+	}
+
+	private void exportAction() {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Export As...");
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Mallard Sprite exported projects", "*.mldsx"));
+		chooser.setSelectedExtensionFilter(chooser.getExtensionFilters().get(0));
+
+		File file = chooser.showSaveDialog(Mallard.getStage());
+		if (file == null)
+			return;
+
+		if (!file.getName().endsWith(".mldsx"))
+			file = new File(file.getParent(), String.format("%s.mldsx", file.getName()));
+
+		try {
+			SpriteProjectAtlasPacker.AtlasData atlasData = new SpriteProjectAtlasPacker().pack(this, 1);
+			JSONObject json = Mallard.spriteProjectSerializer.serializeForExport(atlasData);
+
+			WritableImage outputTexture = new WritableImage(atlasData.width, atlasData.height);
+			for (Map.Entry<SpriteProject.Frame, Rectangle> frameEntry : atlasData.atlas.entrySet()) {
+				Rectangle region = frameEntry.getValue();
+				outputTexture.getPixelWriter().setPixels(
+						(int)region.position.x, (int)region.position.y,
+						(int)region.size.x, (int)region.size.y,
+						frameEntry.getKey().image.getValue().getPixelReader(),
+						0, 0
+				);
+			}
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(file))) {
+				DataOutputStream data = new DataOutputStream(zip);
+
+				zip.putNextEntry(new ZipEntry("data.json"));
+				data.write(new JSONPrettyPrinter().toString(json).getBytes("UTF-8"));
+				zip.closeEntry();
+
+				zip.putNextEntry(new ZipEntry("texture.png"));
+				ImageIO.write(SwingFXUtils.fromFXImage(outputTexture, null), "png", zip);
+				zip.closeEntry();
+			}
+		} catch (IOException e) {
+			throw new UnexpectedException(e);
+		}
+	}
 
 	public static class Frame {
 		@Nonnull

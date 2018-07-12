@@ -27,22 +27,23 @@ public class Mallard extends Application {
 	@Nonnull
 	public static final JSONSerializationManager<Project> projectSerializationManager = new JSONSerializationManager<>();
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+	@Nonnull
+	public static final SpriteProjectSerializer spriteProjectSerializer;
 
-	private void initialize() {
+	static {
 		shapeManager.register("Rectangle", Rectangle.class, new ShapeSerializer.RectangleSerializer(), RectangleEditor::new);
 		shapeManager.register("Circle", Circle.class, new ShapeSerializer.CircleSerializer(), CircleEditor::new);
 		shapeManager.register("Polygon", Polygon.class, new ShapeSerializer.PolygonSerializer(), PolygonEditor::new);
 
-		projectSerializationManager.register(SpriteProject.class, new SpriteProjectSerializer(shapeManager));
+		projectSerializationManager.register(SpriteProject.class, spriteProjectSerializer = new SpriteProjectSerializer(shapeManager));
+	}
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 	@Override
 	public void start(Stage stage) {
-		initialize();
-
 		Mallard.stage = stage;
 		stage.setTitle("Mallard");
 		stage.setScene(new Scene(new AppController().getView(), 1334, 750));

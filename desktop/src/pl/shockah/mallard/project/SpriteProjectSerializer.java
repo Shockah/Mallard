@@ -7,10 +7,12 @@ import java.util.Base64;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.paint.Color;
+import pl.shockah.godwit.geom.Rectangle;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.jay.JSONList;
@@ -31,8 +33,18 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 	@Nonnull
 	@Override
-	@SuppressWarnings("unchecked")
 	public JSONObject serialize(@Nonnull SpriteProject project) {
+		return serialize(project, null);
+	}
+
+	@Nonnull
+	public JSONObject serializeForExport(@Nonnull SpriteProjectAtlasPacker.AtlasData atlasData) {
+		return serialize(atlasData.project, atlasData.atlas);
+	}
+
+	@Nonnull
+	@SuppressWarnings("unchecked")
+	private JSONObject serialize(@Nonnull SpriteProject project, @Nullable Map<SpriteProject.Frame, Rectangle> atlas) {
 		try {
 			JSONObject json = new JSONObject();
 			json.put("version", VERSION);
@@ -41,9 +53,19 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 			for (SpriteProject.Frame frame : project.frames) {
 				JSONObject jSubsprite = jSubsprites.addNewObject();
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(SwingFXUtils.fromFXImage(frame.image.getValue(), null), "png", baos);
-				jSubsprite.put("data", Base64.getEncoder().encodeToString(baos.toByteArray()));
+				if (atlas == null) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(SwingFXUtils.fromFXImage(frame.image.getValue(), null), "png", baos);
+					jSubsprite.put("data", Base64.getEncoder().encodeToString(baos.toByteArray()));
+				} else {
+					Rectangle region = atlas.get(frame);
+					jSubsprite.put("region", JSONObject.of(
+							"x", (int)region.position.x,
+							"y", (int)region.position.y,
+							"w", (int)region.size.x,
+							"h", (int)region.size.y
+					));
+				}
 
 				if (!frame.origin.equals(Vec2.zero)) {
 					jSubsprite.put("origin", JSONObject.of(
@@ -56,13 +78,15 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 					JSONObject jSubspriteShapes = jSubsprite.putNewObject("shapes");
 					for (SpriteProject.Frame.ShapeEntry<? extends Shape.Filled> shapeEntry : frame.shapes) {
 						JSONObject jShapeEntry = shapeManager.jsonSerializationManager.serialize(shapeEntry.shape.getValue());
-						if (!shapeEntry.visible.get())
-							jShapeEntry.put("visible", false);
-						jShapeEntry.put("color", JSONObject.of(
-								"r", shapeEntry.color.getValue().getRed(),
-								"g", shapeEntry.color.getValue().getGreen(),
-								"b", shapeEntry.color.getValue().getBlue()
-						));
+						if (atlas == null) {
+							if (!shapeEntry.visible.get())
+								jShapeEntry.put("visible", false);
+							jShapeEntry.put("color", JSONObject.of(
+									"r", shapeEntry.color.getValue().getRed(),
+									"g", shapeEntry.color.getValue().getGreen(),
+									"b", shapeEntry.color.getValue().getBlue()
+							));
+						}
 						jSubspriteShapes.put(shapeEntry.name, jShapeEntry);
 					}
 				}

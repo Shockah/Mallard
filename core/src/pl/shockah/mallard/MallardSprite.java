@@ -26,6 +26,11 @@ public class MallardSprite {
 	public final Map<String, Animation> animations;
 
 	public MallardSprite(@Nonnull Texture texture, @Nonnull Subsprite[] subsprites, @Nonnull Map<String, Animation> animations) {
+		for (int i = 1; i < subsprites.length; i++) {
+			if (subsprites[0].region.getTexture() != subsprites[i].region.getTexture())
+				throw new IllegalArgumentException("Subsprites must be on the same texture.");
+		}
+
 		this.texture = texture;
 		this.subsprites = new Array1D<>(subsprites);
 		this.animations = Collections.unmodifiableMap(new LinkedHashMap<>(animations));

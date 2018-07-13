@@ -39,7 +39,7 @@ import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.jay.JSONObject;
 import pl.shockah.jay.JSONPrettyPrinter;
 import pl.shockah.mallard.Mallard;
-import pl.shockah.mallard.ShapeManager;
+import pl.shockah.mallard.EditorShapeManager;
 import pl.shockah.mallard.ui.controller.sprite.editor.ShapeEditor;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 import pl.shockah.unicorn.UnexpectedException;
@@ -200,7 +200,7 @@ public class SpriteProject extends Project {
 
 		public static class ShapeEntry<S extends Shape.Filled> {
 			@Nonnull
-			public final ShapeManager.Entry<S> shapeManagerEntry;
+			public final EditorShapeManager.Entry<S> shapeManagerEntry;
 
 			@Nonnull
 			public final ShapeEditor<S> editor;
@@ -218,7 +218,7 @@ public class SpriteProject extends Project {
 			public final BooleanProperty visible = new SimpleBooleanProperty(this, "visible", true);
 
 			@SuppressWarnings("unchecked")
-			public ShapeEntry(@Nonnull Frame frame, @Nonnull ShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
+			public ShapeEntry(@Nonnull Frame frame, @Nonnull EditorShapeManager.Entry<S> shapeManagerEntry, @Nonnull String name, @Nullable S shape) {
 				this.shapeManagerEntry = shapeManagerEntry;
 				this.name = name;
 				this.shape.setValue(shape);

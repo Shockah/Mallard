@@ -23,7 +23,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
-import pl.shockah.mallard.ShapeManager;
+import pl.shockah.mallard.EditorShapeManager;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
@@ -66,7 +66,7 @@ public class SpriteFrameShapesController extends Controller {
 																setHeaderText(String.format("Add `%s` shape", entry.name));
 																setContentText("Name:");
 															}}.showAndWait().ifPresent(result -> {
-																ShapeManager.Entry<Shape.Filled> rawEntry = (ShapeManager.Entry<Shape.Filled>) entry;
+																EditorShapeManager.Entry<Shape.Filled> rawEntry = (EditorShapeManager.Entry<Shape.Filled>) entry;
 
 																ListChangeListener<SpriteFrameEditor> temporaryListener = c -> {
 																	while (c.next()) {

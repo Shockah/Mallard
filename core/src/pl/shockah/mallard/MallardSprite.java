@@ -14,6 +14,8 @@ import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.unicorn.collection.Array1D;
 
 public class MallardSprite {
+	public static final int VERSION = 1;
+
 	@Nonnull
 	public final Texture texture;
 
@@ -68,9 +70,13 @@ public class MallardSprite {
 
 			public final float relativeDuration;
 
-			public Frame(@Nonnull Subsprite subsprite, float relativeDuration) {
+			@Nonnull
+			public final Vec2 offset;
+
+			public Frame(@Nonnull Subsprite subsprite, float relativeDuration, @Nonnull Vec2 offset) {
 				this.subsprite = subsprite;
 				this.relativeDuration = relativeDuration;
+				this.offset = offset;
 			}
 		}
 	}

@@ -22,7 +22,7 @@ public class Mallard extends Application {
 	private static Stage stage;
 
 	@Nonnull
-	public static final ShapeManager shapeManager = new ShapeManager();
+	public static final EditorShapeManager shapeManager = new EditorShapeManager();
 
 	@Nonnull
 	public static final JSONSerializationManager<Project> projectSerializationManager = new JSONSerializationManager<>();

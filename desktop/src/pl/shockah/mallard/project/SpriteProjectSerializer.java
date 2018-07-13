@@ -17,16 +17,15 @@ import pl.shockah.godwit.geom.Shape;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.jay.JSONList;
 import pl.shockah.jay.JSONObject;
-import pl.shockah.mallard.ShapeManager;
+import pl.shockah.mallard.MallardSprite;
+import pl.shockah.mallard.EditorShapeManager;
 import pl.shockah.unicorn.UnexpectedException;
 
 public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
-	private static final int VERSION = 1;
-
 	@Nonnull
-	protected final ShapeManager shapeManager;
+	protected final EditorShapeManager shapeManager;
 
-	public SpriteProjectSerializer(@Nonnull ShapeManager shapeManager) {
+	public SpriteProjectSerializer(@Nonnull EditorShapeManager shapeManager) {
 		super("sprite");
 		this.shapeManager = shapeManager;
 	}
@@ -47,7 +46,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 	private JSONObject serialize(@Nonnull SpriteProject project, @Nullable Map<SpriteProject.Frame, Rectangle> atlas) {
 		try {
 			JSONObject json = new JSONObject();
-			json.put("version", VERSION);
+			json.put("version", MallardSprite.VERSION);
 
 			JSONList<JSONObject> jSubsprites = (JSONList<JSONObject>) json.putNewList("frames");
 			for (SpriteProject.Frame frame : project.frames) {
@@ -129,7 +128,7 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 	public SpriteProject deserialize(@Nonnull JSONObject json) {
 		try {
 			int version = json.getInt("version");
-			if (version > VERSION)
+			if (version > MallardSprite.VERSION)
 				throw new IllegalArgumentException("Cannot handle a newer version of a project.");
 
 			SpriteProject project = new SpriteProject();

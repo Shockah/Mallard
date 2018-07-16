@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import java8.util.Spliterators;
 import java8.util.stream.RefStreams;
 import java8.util.stream.StreamSupport;
+import lombok.Getter;
 import pl.shockah.godwit.fx.Fx;
 import pl.shockah.godwit.fx.RunnableFx;
 import pl.shockah.godwit.fx.SequenceFx;
@@ -29,12 +30,15 @@ public class MallardSprite {
 	public static final int VERSION = 1;
 
 	@Nonnull
+	@Getter
 	public final Texture texture;
 
 	@Nonnull
+	@Getter
 	public final Array1D<Subsprite> subsprites;
 
 	@Nonnull
+	@Getter
 	public final Map<String, Animation> animations;
 
 	public MallardSprite(@Nonnull Texture texture, @Nonnull Subsprite[] subsprites, @Nonnull Map<String, Animation> animations) {

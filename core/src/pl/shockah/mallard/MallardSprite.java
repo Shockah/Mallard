@@ -135,8 +135,8 @@ public class MallardSprite {
 			}
 
 			@Nonnull
-			public GfxSprite getGfxSprite() {
-				return subsprite.getGfxSprite();
+			public MallardGfxSprite getGfxSprite() {
+				return new MallardGfxSprite(this);
 			}
 		}
 	}

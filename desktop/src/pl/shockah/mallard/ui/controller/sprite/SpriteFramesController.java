@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -89,9 +91,11 @@ public class SpriteFramesController extends Controller {
 			getChildren().addAll(
 					new HBox(4) {{
 						getChildren().addAll(
-								new Button("Add") {{
+								new SplitMenuButton() {{
+									setText("Add");
 									setMaxWidth(Double.MAX_VALUE);
 									HBox.setHgrow(this, Priority.ALWAYS);
+
 									setOnAction(event -> {
 										FileChooser chooser = new FileChooser();
 										chooser.setTitle("Add frame");
@@ -106,6 +110,14 @@ public class SpriteFramesController extends Controller {
 											}
 										}
 									});
+
+									getItems().add(
+											new MenuItem("Separator") {{
+												setOnAction(event -> {
+													project.frames.add(null);
+												});
+											}}
+									);
 								}},
 								new Button("Remove") {{
 									removeButton.value = this;
@@ -144,10 +156,13 @@ public class SpriteFramesController extends Controller {
 			super.updateItem(item, empty);
 
 			imageView.imageProperty().unbind();
-			if (empty || item == null)
+			if (empty || item == null) {
+				prefHeight(8);
 				imageView.setImage(null);
-			else
+			} else {
+				prefHeight(USE_COMPUTED_SIZE);
 				imageView.imageProperty().bind(item.image);
+			}
 		}
 	}
 }

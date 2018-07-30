@@ -50,6 +50,12 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 			JSONList<JSONObject> jSubsprites = (JSONList<JSONObject>) json.putNewList("frames");
 			for (SpriteProject.Frame frame : project.frames) {
+				if (frame == null) {
+					if (atlas == null)
+						jSubsprites.add(null);
+					continue;
+				}
+
 				JSONObject jSubsprite = jSubsprites.addNewObject();
 
 				if (atlas == null) {
@@ -133,7 +139,12 @@ public class SpriteProjectSerializer extends ProjectSerializer<SpriteProject> {
 
 			SpriteProject project = new SpriteProject();
 
-			for (JSONObject jSubsprite : json.getList("frames").ofObjects()) {
+			for (JSONObject jSubsprite : json.getList("frames").ofOptionalObjects()) {
+				if (jSubsprite == null) {
+					project.frames.add(null);
+					continue;
+				}
+
 				byte[] data = Base64.getDecoder().decode(jSubsprite.getString("data"));
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
 				SpriteProject.Frame frame = new SpriteProject.Frame(SwingFXUtils.toFXImage(ImageIO.read(bais), null));

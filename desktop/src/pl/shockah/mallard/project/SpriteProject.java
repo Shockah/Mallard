@@ -80,7 +80,7 @@ public class SpriteProject extends Project {
 			file = new File(file.getParent(), String.format("%s.mldsx", file.getName()));
 
 		try {
-			SpriteProjectAtlasPacker.AtlasData atlasData = new SpriteProjectAtlasPacker().pack(this, 1);
+			SpriteProjectAtlasPacker.AtlasData atlasData = new SpriteProjectAtlasPacker().pack(this, 1, 1, 1);
 			JSONObject json = Mallard.spriteProjectSerializer.serializeForExport(atlasData);
 
 			WritableImage outputTexture = new WritableImage(atlasData.width, atlasData.height);

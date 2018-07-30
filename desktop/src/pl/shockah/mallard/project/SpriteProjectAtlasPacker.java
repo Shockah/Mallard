@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -15,23 +17,27 @@ import pl.shockah.unicorn.collection.MutableBooleanArray2D;
 
 public class SpriteProjectAtlasPacker {
 	@Nonnull
-	public AtlasData pack(@Nonnull SpriteProject project, int gap) {
+	public AtlasData pack(@Nonnull SpriteProject project, int gap, int gridX, int gridY) {
+		List<SpriteProject.Frame> toPack = project.frames.stream()
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+
 		Map<SpriteProject.Frame, Double> sortValues = new HashMap<>();
-		for (SpriteProject.Frame frame : project.frames) {
+		for (SpriteProject.Frame frame : toPack) {
 			double dw = frame.image.getValue().getWidth();
 			double dh = frame.image.getValue().getHeight();
 			double value = Math.max(dw, dh) / Math.min(dw, dh) * dw * dh;
 			sortValues.put(frame, value);
 		}
 
-		List<SpriteProject.Frame> sorted = new ArrayList<>(project.frames);
+		List<SpriteProject.Frame> sorted = new ArrayList<>(toPack);
 		sorted.sort(Comparator.comparingDouble(sortValues::get).reversed());
 
 		int width = 64;
 		int height = 64;
 		while (true) {
 			try {
-				Map<SpriteProject.Frame, Rectangle> atlas = pack(sorted, width, height, gap);
+				Map<SpriteProject.Frame, Rectangle> atlas = pack(sorted, width, height, gap, gridX, gridY);
 				int atlasWidth = atlas.values().stream()
 						.mapToInt(rectangle -> (int)(rectangle.position.x + rectangle.size.x))
 						.max().orElse(0) + gap;
@@ -49,7 +55,7 @@ public class SpriteProjectAtlasPacker {
 	}
 
 	@Nonnull
-	private Map<SpriteProject.Frame, Rectangle> pack(@Nonnull List<SpriteProject.Frame> sortedFrames, int width, int height, int gap) throws CannotFitException {
+	private Map<SpriteProject.Frame, Rectangle> pack(@Nonnull List<SpriteProject.Frame> sortedFrames, int width, int height, int gap, int gridX, int gridY) throws CannotFitException {
 		Map<SpriteProject.Frame, Rectangle> atlas = new LinkedHashMap<>();
 		MutableBooleanArray2D taken = new MutableBooleanArray2D(width, height);
 
@@ -58,9 +64,9 @@ public class SpriteProjectAtlasPacker {
 			int w = (int)frame.image.getValue().getWidth();
 			int h = (int)frame.image.getValue().getHeight();
 
-			for (int y = gap; y <= height - h - gap; y++) {
+			for (int y = gap; y <= height - h - gap; y += gridY) {
 				OuterX:
-				for (int x = gap; x <= width - w - gap; x++) {
+				for (int x = gap; x <= width - w - gap; x += gridX) {
 					for (int y2 = 0; y2 < h + gap; y2++) {
 						for (int x2 = 0; x2 < w + gap; x2++) {
 							if (taken.get(x + x2, y + y2))

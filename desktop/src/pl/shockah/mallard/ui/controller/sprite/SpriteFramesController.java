@@ -20,11 +20,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.ListViewUtilities;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
+import pl.shockah.unicorn.javafx.Controller;
+import pl.shockah.unicorn.javafx.ListViews;
 
 public class SpriteFramesController extends Controller {
 	@Nonnull
@@ -77,8 +80,8 @@ public class SpriteFramesController extends Controller {
 					return;
 
 				SpriteFramePreviewController previewController = new SpriteFramePreviewController(spriteController, project, selected);
-				spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getView());
-				spriteController.setCenterPanel(previewController.getView());
+				spriteController.setRightPanel(new SpriteFramePropertiesController(spriteController, previewController, project, selected).getRoot());
+				spriteController.setCenterPanel(previewController.getRoot());
 			});
 
 			getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -86,7 +89,7 @@ public class SpriteFramesController extends Controller {
 			});
 		}};
 
-		setView(new VBox(4) {{
+		setRoot(new VBox(4) {{
 			setMaxHeight(Double.MAX_VALUE);
 			getChildren().addAll(
 					new HBox(4) {{
@@ -148,7 +151,7 @@ public class SpriteFramesController extends Controller {
 			setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 			setAlignment(Pos.CENTER);
 
-			ListViewUtilities.setupDragAndDropReorder(this, ListViewUtilities.ReorderMethod.RemoveAndInsert);
+			ListViews.setupDragAndDropReorder(this, ListViews.ReorderMethod.RemoveAndInsert);
 		}
 
 		@Override

@@ -13,6 +13,9 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.project.SpriteProject;
@@ -47,7 +50,7 @@ public class SpriteFramePreviewController extends AbstractSpritePreviewControlle
 		this.project = project;
 		this.frame.setValue(frame);
 
-		setView(new TitledPane("Frame Preview", new VBox() {{
+		setRoot(new TitledPane("Frame Preview", new VBox() {{
 			getChildren().add(canvas);
 			VBox.setVgrow(canvas, Priority.ALWAYS);
 		}}) {{

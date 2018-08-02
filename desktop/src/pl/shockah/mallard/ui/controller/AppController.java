@@ -8,9 +8,13 @@ import javax.annotation.Nonnull;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.layout.Priority;
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import lombok.Getter;
 import pl.shockah.jay.JSONParser;
 import pl.shockah.jay.JSONPrettyPrinter;
 import pl.shockah.mallard.Mallard;
@@ -19,36 +23,33 @@ import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
 import pl.shockah.mallard.ui.controller.sprite.SpriteController;
 import pl.shockah.unicorn.UnexpectedException;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class AppController extends Controller {
+	@FXML
+	@InjectedChild
+	private MenuBarController menuBarController;
+
+	@FXML
+	private Pane contentPane;
+
 	@Nonnull
 	public final Property<Project> project = new SimpleObjectProperty<>(this, "project");
 
-	@Nonnull
-	private final VBox projectSpecificContainer;
-
-	public AppController() {
-		projectSpecificContainer = new VBox();
-		VBox.setVgrow(projectSpecificContainer, Priority.ALWAYS);
-
-		setView(new VBox() {{
-			setMaxHeight(Double.MAX_VALUE);
-			getChildren().addAll(
-					new MenuBarController(AppController.this).getView(),
-					projectSpecificContainer
-			);
-		}});
+	@Override
+	protected void onLoaded() {
+		super.onLoaded();
 
 		BindUtilities.bind(project, project -> setupProjectSpecificContainer());
 	}
 
 	public void setupProjectSpecificContainer() {
-		projectSpecificContainer.getChildren().removeAll(projectSpecificContainer.getChildren());
+		contentPane.getChildren().clear();
 
 		if (project.getValue() instanceof SpriteProject)
-			projectSpecificContainer.getChildren().add(new SpriteController((SpriteProject)project.getValue()).getView());
+			contentPane.getChildren().add(new SpriteController((SpriteProject)project.getValue()).getRoot());
 		else
-			projectSpecificContainer.getChildren().add(new WelcomeController(this).getView());
+			contentPane.getChildren().add(new WelcomeController(this).getRoot());
 	}
 
 	public void newAction() {

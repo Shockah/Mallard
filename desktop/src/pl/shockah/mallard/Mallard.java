@@ -46,7 +46,7 @@ public class Mallard extends Application {
 	public void start(Stage stage) {
 		Mallard.stage = stage;
 		stage.setTitle("Mallard");
-		stage.setScene(new Scene(new AppController().getView(), 1334, 750));
+		stage.setScene(new Scene(Layouts.app.load().getRoot(), 1334, 750));
 		stage.show();
 	}
 }

@@ -10,8 +10,11 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.controller.Controller;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class SpriteAnimationPropertiesController extends Controller {
 	@Nonnull
@@ -38,7 +41,7 @@ public class SpriteAnimationPropertiesController extends Controller {
 		this.project = project;
 		this.animationEntry = animationEntry;
 
-		setView(new VBox(8) {{
+		setRoot(new VBox(8) {{
 			setPadding(new Insets(8));
 
 			getChildren().addAll(
@@ -56,7 +59,7 @@ public class SpriteAnimationPropertiesController extends Controller {
 					}}) {{
 						setCollapsible(false);
 					}},
-					new TitledPane("Frames", new SpriteAnimationFramesController(spriteController, framesController, project, animationEntry).getView()) {{
+					new TitledPane("Frames", new SpriteAnimationFramesController(spriteController, framesController, project, animationEntry).getRoot()) {{
 						setCollapsible(false);
 					}}
 			);

@@ -1,7 +1,14 @@
 package pl.shockah.mallard.ui.controller;
 
+import org.fxmisc.easybind.EasyBind;
+
 import javax.annotation.Nonnull;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
@@ -11,53 +18,53 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
+import pl.shockah.mallard.Layouts;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.ui.BindUtilities;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class WelcomeController extends Controller {
 	@Nonnull
-	public final AppController appController;
+	private final AppController appController;
+
+	@FXML
+	private TitledPane titledPane;
+
+	@FXML
+	private Hyperlink newProjectLink;
+
+	@FXML
+	private Hyperlink existingProjectLink;
+
+	@FXML
+	private Region outerBox;
+
+	@FXML
+	private Region innerBox;
 
 	public WelcomeController(@Nonnull AppController appController) {
 		this.appController = appController;
+		Layouts.welcome.loadIntoController(this);
+	}
 
-		setView(new HBox() {{
-			VBox.setVgrow(this, Priority.ALWAYS);
-			setAlignment(Pos.CENTER);
+	@Override
+	protected void onLoaded() {
+		super.onLoaded();
 
-			getChildren().add(new VBox() {{
-				setAlignment(Pos.CENTER);
+		titledPane.minWidthProperty().bind(EasyBind.map(Mallard.getStage().widthProperty(), width -> width.doubleValue() * 0.4));
 
-				getChildren().add(new TitledPane("Welcome", new VBox(8) {{
-					BindUtilities.bind(Mallard.getStage().widthProperty(), width -> setMinWidth(width.doubleValue() * 0.4));
-					setPadding(new Insets(24));
+		newProjectLink.visitedProperty().bind(new ReadOnlyBooleanWrapper(false));
+		existingProjectLink.visitedProperty().bind(new ReadOnlyBooleanWrapper(false));
+	}
 
-					getChildren().addAll(
-							new Label("Mallard") {{
-								setStyle("-fx-font-size: 2em;");
-							}},
-							new Region() {{
-								setPrefHeight(16);
-							}},
-							new Hyperlink("Start a new project") {{
-								visitedProperty().addListener((observable, oldValue, newValue) -> {
-									if (newValue)
-										setVisited(false);
-								});
-								setOnAction(event -> appController.newAction());
-							}},
-							new Hyperlink("Open an existing project") {{
-								visitedProperty().addListener((observable, oldValue, newValue) -> {
-									if (newValue)
-										setVisited(false);
-								});
-								setOnAction(event -> appController.openAction());
-							}}
-					);
-				}}) {{
-					setCollapsible(false);
-				}});
-			}});
-		}});
+	@FXML
+	private void onNewProjectAction(ActionEvent event) {
+		appController.newAction();
+	}
+
+	@FXML
+	private void onExistingProjectAction(ActionEvent event) {
+		appController.openAction();
 	}
 }

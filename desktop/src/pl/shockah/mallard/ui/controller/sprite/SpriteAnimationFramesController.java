@@ -18,11 +18,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.ListViewUtilities;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
+import pl.shockah.unicorn.javafx.Controller;
+import pl.shockah.unicorn.javafx.ListViews;
 
 public class SpriteAnimationFramesController extends Controller {
 	@Nonnull
@@ -46,7 +49,7 @@ public class SpriteAnimationFramesController extends Controller {
 		Box<ListView<SpriteProject.Animation.Frame>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
-		setView(new VBox(4) {{
+		setRoot(new VBox(4) {{
 			setPadding(new Insets(4));
 			setMaxHeight(Double.MAX_VALUE);
 			getChildren().addAll(
@@ -80,16 +83,6 @@ public class SpriteAnimationFramesController extends Controller {
 						setMaxHeight(Double.MAX_VALUE);
 						setCellFactory(self2 -> new Cell());
 						setItems(animationEntry.animation.frames);
-						setOnMouseClicked(event -> {
-							if (event.getButton() != MouseButton.PRIMARY || event.getClickCount() != 2)
-								return;
-
-							SpriteProject.Animation.Frame selected = getSelectionModel().getSelectedItem();
-							if (selected == null)
-								return;
-
-							//TODO: show specific frame preview
-						});
 
 						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 							removeButton.value.setDisable(newValue == null);
@@ -161,7 +154,7 @@ public class SpriteAnimationFramesController extends Controller {
 				);
 			}});
 
-			ListViewUtilities.setupDragAndDropReorder(this, ListViewUtilities.ReorderMethod.RemoveAndInsert);
+			ListViews.setupDragAndDropReorder(this, ListViews.ReorderMethod.RemoveAndInsert);
 		}
 
 		@Override

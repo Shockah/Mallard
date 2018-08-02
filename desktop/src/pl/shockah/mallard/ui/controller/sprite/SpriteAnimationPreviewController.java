@@ -25,6 +25,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.godwit.geom.MutableVec2;
 import pl.shockah.godwit.geom.Rectangle;
 import pl.shockah.godwit.geom.Vec2;
@@ -60,7 +63,7 @@ public class SpriteAnimationPreviewController extends AbstractSpritePreviewContr
 		if (!animationEntry.animation.frames.isEmpty())
 			frame.setValue(animationEntry.animation.frames.get(0).frame);
 
-		setView(new VBox(8) {{
+		setRoot(new VBox(8) {{
 			setMaxHeight(Double.MAX_VALUE);
 
 			getChildren().addAll(

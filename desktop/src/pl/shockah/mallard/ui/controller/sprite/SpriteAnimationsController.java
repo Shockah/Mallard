@@ -10,9 +10,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.unicorn.collection.Box;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class SpriteAnimationsController extends Controller {
 	@Nonnull
@@ -32,7 +35,7 @@ public class SpriteAnimationsController extends Controller {
 		Box<ListView<SpriteProject.Animation.Entry>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
-		setView(new VBox(4) {{
+		setRoot(new VBox(4) {{
 			setMaxHeight(Double.MAX_VALUE);
 			getChildren().addAll(
 					new HBox(4) {{
@@ -75,8 +78,8 @@ public class SpriteAnimationsController extends Controller {
 								return;
 
 							SpriteAnimationPreviewController previewController = new SpriteAnimationPreviewController(spriteController, project, selected);
-							spriteController.setRightPanel(new SpriteAnimationPropertiesController(spriteController, previewController, framesController, project, selected).getView());
-							spriteController.setCenterPanel(previewController.getView());
+							spriteController.setRightPanel(new SpriteAnimationPropertiesController(spriteController, previewController, framesController, project, selected).getRoot());
+							spriteController.setCenterPanel(previewController.getRoot());
 						});
 
 						getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

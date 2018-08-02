@@ -3,27 +3,27 @@ package pl.shockah.mallard.ui.controller;
 import javax.annotation.Nonnull;
 
 import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import lombok.Getter;
 import pl.shockah.mallard.project.Project;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class MenuBarController extends Controller {
-	@Nonnull
-	public final AppController appController;
+	@InjectedParent
+	private AppController appController;
 
-	@Nonnull
-	private final MenuBar menuBar;
+	@FXML
+	private MenuBar menuBar;
 
-	public MenuBarController(@Nonnull AppController appController) {
-		this.appController = appController;
+	@Override
+	protected void onLoaded() {
+		super.onLoaded();
+		menuBar.setUseSystemMenuBar(true);
 
-		menuBar = new MenuBar() {{
-			setUseSystemMenuBar(true);
-		}};
-		setView(menuBar);
 		setup();
-
 		appController.project.addListener((observable, oldValue, newValue) -> {
 			setup();
 		});
@@ -32,7 +32,7 @@ public class MenuBarController extends Controller {
 	public void setup() {
 		Menu fileMenu;
 
-		menuBar.getMenus().removeAll(menuBar.getMenus());
+		menuBar.getMenus().clear();
 		menuBar.getMenus().add(fileMenu = new Menu("File") {{
 			getItems().addAll(
 					new MenuItem("New Project") {{

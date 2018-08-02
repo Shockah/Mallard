@@ -21,13 +21,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import pl.shockah.godwit.geom.Shape;
 import pl.shockah.mallard.Mallard;
 import pl.shockah.mallard.EditorShapeManager;
 import pl.shockah.mallard.project.SpriteProject;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.controller.sprite.editor.SpriteFrameEditor;
 import pl.shockah.unicorn.collection.Box;
+import pl.shockah.unicorn.javafx.Controller;
 
 public class SpriteFrameShapesController extends Controller {
 	@Nonnull
@@ -48,7 +51,7 @@ public class SpriteFrameShapesController extends Controller {
 		Box<ListView<SpriteProject.Frame.ShapeEntry<? extends Shape.Filled>>> listView = new Box<>();
 		Box<Button> removeButton = new Box<>();
 
-		setView(new VBox(4) {{
+		setRoot(new VBox(4) {{
 			setPadding(new Insets(4));
 			setMaxHeight(Double.MAX_VALUE);
 			getChildren().addAll(

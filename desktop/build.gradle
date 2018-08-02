@@ -3,6 +3,8 @@ apply plugin: "java"
 
 dependencies {
 	compile project(":core")
+	compile "com.github.Shockah.Unicorn:javafx:$unicornVersion"
+	compile "org.fxmisc.easybind:easybind:1.0.3"
 }
 
 targetCompatibility = '1.8'
@@ -10,10 +12,11 @@ sourceCompatibility = '1.8'
 
 sourceSets.main {
 	java.srcDirs = ["src"]
+	resources.srcDirs = ["resources"]
 }
 
 project.ext.mainClassName = "pl.shockah.mallard.Mallard"
-project.ext.assetsDir = new File("assets")
+project.ext.assetsDir = new File("resources")
 
 jar {
 	manifest {

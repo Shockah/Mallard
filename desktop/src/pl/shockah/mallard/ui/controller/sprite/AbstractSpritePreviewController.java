@@ -12,8 +12,8 @@ import pl.shockah.godwit.geom.Rectangle;
 import pl.shockah.godwit.geom.Vec2;
 import pl.shockah.mallard.project.SpriteProject;
 import pl.shockah.mallard.ui.BindUtilities;
-import pl.shockah.mallard.ui.controller.Controller;
 import pl.shockah.mallard.ui.view.ResizableCanvas;
+import pl.shockah.unicorn.javafx.Controller;
 
 public abstract class AbstractSpritePreviewController extends Controller {
 	@Nonnull

@@ -37,12 +37,6 @@ public class WelcomeController extends Controller {
 	@FXML
 	private Hyperlink existingProjectLink;
 
-	@FXML
-	private Region outerBox;
-
-	@FXML
-	private Region innerBox;
-
 	public WelcomeController(@Nonnull AppController appController) {
 		this.appController = appController;
 		Layouts.welcome.loadIntoController(this);
